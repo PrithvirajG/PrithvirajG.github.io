@@ -12,16 +12,16 @@ include('remotelab.php');
     {
         $SpeedValue = 0;
         $query = "UPDATE `Remote DATA` SET Speed = '$SpeedValue'";
-        $run = mysqli_query($con,$query);
-            
+        $run = mysqli_query($con,$query);   
     }
     if($run)
-            {
-                echo "values inserted";
-            }
-            else
-            {
-                echo "not inserted";
-                echo mysqli_query_error($con);
-            }
+    {
+        echo "values inserted";
+    }
+    else
+    {
+        echo "not inserted";
+        echo mysqli_query_error($con);
+    }
 ?>
+
