@@ -1,1 +1,1461 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Prithviraj Mohan Gotepatil — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0b0c0f;
+    --surface: #13151a;
+    --surface2: #1c1f28;
+    --border: #252833;
+    --accent: #e8ff47;
+    --accent2: #47c4ff;
+    --accent3: #ff6b47;
+    --text: #e8e9ef;
+    --text-muted: #7a7f96;
+    --text-dim: #3f4358;
+    --tag-bg: #1c2030;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(11,12,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(80px, 18vw, 260px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(232,255,71,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-inner { position: relative; z-index: 2; }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-name span { color: var(--accent); }
+
+  .hero-title {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.35rem);
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+  }
+
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 3rem; }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {}
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .hero-contact {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .contact-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .contact-item svg { color: var(--accent); flex-shrink: 0; }
+
+  /* SECTION TITLES */
+  .section {
+    padding: 6rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: -0.02em;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    margin-bottom: 0.4rem;
+  }
+
+  /* TODO BANNER */
+  .todo-banner {
+    background: rgba(232,255,71,0.05);
+    border: 1px solid rgba(232,255,71,0.2);
+    border-left: 3px solid var(--accent);
+    padding: 0.8rem 1.2rem;
+    border-radius: 0 4px 4px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: rgba(232,255,71,0.7);
+    margin-bottom: 1.5rem;
+  }
+  .todo-banner strong { color: var(--accent); }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .about-text p {
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+  }
+
+  .about-text p strong { color: var(--text); }
+
+  .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .skill-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .skill-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.7rem;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-muted);
+  }
+
+  /* EXPERIENCE TIMELINE */
+  .experience-list { display: flex; flex-direction: column; gap: 0; }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2.5rem;
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .exp-item:last-child { border-bottom: none; }
+
+  .exp-meta {}
+  .exp-company {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .exp-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .exp-period {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .exp-content {}
+  .exp-overview {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 0.97rem;
+  }
+
+  /* PROJECT CARDS */
+  .project-cards { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .project-card:hover {
+    border-color: rgba(232,255,71,0.2);
+    background: var(--surface2);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .card-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-production { background: rgba(71,196,255,0.1); color: var(--accent2); border: 1px solid rgba(71,196,255,0.2); }
+  .badge-internal { background: rgba(255,107,71,0.1); color: var(--accent3); border: 1px solid rgba(255,107,71,0.2); }
+  .badge-personal { background: rgba(232,255,71,0.08); color: var(--accent); border: 1px solid rgba(232,255,71,0.15); }
+
+  .card-desc {
+    color: var(--text-muted);
+    font-size: 0.93rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .card-highlights {
+    list-style: none;
+    margin-bottom: 1.5rem;
+  }
+  .card-highlights li {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    padding: 0.35rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    border-bottom: 1px solid rgba(37,40,51,0.5);
+  }
+  .card-highlights li:last-child { border-bottom: none; }
+  .card-highlights li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .card-todo {
+    background: rgba(232,255,71,0.04);
+    border: 1px dashed rgba(232,255,71,0.15);
+    padding: 0.6rem 1rem;
+    border-radius: 3px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(232,255,71,0.5);
+    margin-bottom: 1.2rem;
+  }
+  .card-todo::before { content: '📌 TODO: '; color: var(--accent); }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .card-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-dim);
+  }
+
+  /* STANDALONE PROJECTS */
+  .standalone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .standalone-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .standalone-card:hover {
+    border-color: rgba(71,196,255,0.2);
+    transform: translateY(-2px);
+  }
+
+  .standalone-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .standalone-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .standalone-desc {
+    font-size: 0.87rem;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .standalone-todo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(232,255,71,0.45);
+    border-top: 1px dashed rgba(232,255,71,0.12);
+    padding-top: 0.8rem;
+  }
+  .standalone-todo::before { content: '📌 '; }
+
+  /* SUMMARY TODOS */
+  .todos-section {
+    background: var(--surface);
+    border: 1px solid rgba(232,255,71,0.15);
+    border-radius: 4px;
+    padding: 2.5rem;
+  }
+
+  .todos-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .todos-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .todo-list { display: flex; flex-direction: column; gap: 0.8rem; }
+
+  .todo-item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    background: rgba(232,255,71,0.03);
+    border: 1px dashed rgba(232,255,71,0.1);
+    border-radius: 3px;
+    font-size: 0.87rem;
+    color: var(--text-muted);
+    align-items: start;
+  }
+
+  .todo-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: bold;
+    padding-top: 0.1rem;
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin: 2rem 0;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 0;
+    text-align: center;
+  }
+
+  .footer-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-inner > * {
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-inner > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-inner > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-inner > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-inner > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero-inner > *:nth-child(5) { animation-delay: 0.5s; }
+  .hero-inner > *:nth-child(6) { animation-delay: 0.6s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .nav-links { display: none; }
+    .hero-stats { gap: 2rem; }
+  }
+
+  /* PRINT / EXPORT HINT */
+  .print-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">PMG</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#todos">Open TODOs</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-bg-text">BUILD</div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Software Developer · Portfolio</div>
+      <h1 class="hero-name">Prithviraj<br/><span>Gotepatil</span></h1>
+      <p class="hero-title">
+        Building production-grade systems at the intersection of AI, Robotics, Cloud Infrastructure, and Backend Engineering.
+      </p>
+      <div class="hero-tags">
+        <span class="hero-tag">Python</span>
+        <span class="hero-tag">Kotlin / Android</span>
+        <span class="hero-tag">Cloud Microservices</span>
+        <span class="hero-tag">Computer Vision</span>
+        <span class="hero-tag">MQTT / RabbitMQ</span>
+        <span class="hero-tag">Kubernetes</span>
+        <span class="hero-tag">LangGraph / RAG</span>
+        <span class="hero-tag">MCP Tools</span>
+        <span class="hero-tag">Drone SDKs</span>
+        <span class="hero-tag">Algorithmic Trading</span>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">3+</div>
+          <div class="stat-label">Years Industry Exp.</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Companies</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">15+</div>
+          <div class="stat-label">Production Projects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">8.79</div>
+          <div class="stat-label">B.Tech CGPA</div>
+        </div>
+      </div>
+      <div class="hero-contact">
+        <div class="contact-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          prithvirajgotepatil@gmail.com
+        </div>
+        <div class="contact-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+          +91-8275867029
+        </div>
+        <div class="contact-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Pune, Maharashtra, India
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a software developer based in Pune, specializing in <strong>backend systems, AI/ML pipelines, cloud microservices, and drone technology</strong>. My work spans the full development lifecycle — from architecture design to production deployment.
+        </p>
+        <p>
+          I've built systems that communicate with drones in real-time over MQTT, designed AI tools that automate hours of manual work into minutes using LangGraph and MCP, and developed Android applications shipped to enterprise customers managing drone fleets.
+        </p>
+        <p>
+          I care deeply about <strong>system reliability, clean architecture, and performance under real-world constraints</strong>. Whether it's a stateless horizontally scalable microservice or an edge-deployed CV tracker running on Jetson Nano, I build for production — not just demos.
+        </p>
+        <p>
+          Currently working as an <strong>AI Backend Engineer at Coditas</strong>, building AI-first automation tools for enterprise GRC workflows. Previously at FlytBase (drone robotics), AlgoBulls (algorithmic trading), and Integrated Active Monitoring (computer vision analytics).
+        </p>
+      </div>
+
+      <div class="skills-grid">
+        <div>
+          <div class="skill-group-label">Languages</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Kotlin</span>
+            <span class="skill-tag">GoLang</span>
+            <span class="skill-tag">C++</span>
+            <span class="skill-tag">JavaScript</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-label">AI / ML / CV</div>
+          <div class="skill-tags">
+            <span class="skill-tag">OpenCV</span>
+            <span class="skill-tag">PyTorch</span>
+            <span class="skill-tag">YOLOv5</span>
+            <span class="skill-tag">LangGraph</span>
+            <span class="skill-tag">RAG</span>
+            <span class="skill-tag">NLP / spaCy / NLTK</span>
+            <span class="skill-tag">HuggingFace</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-label">Cloud & Infrastructure</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Kubernetes / K9s</span>
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">GitHub CI/CD</span>
+            <span class="skill-tag">RabbitMQ</span>
+            <span class="skill-tag">MQTT</span>
+            <span class="skill-tag">Redis</span>
+            <span class="skill-tag">AWS S3</span>
+            <span class="skill-tag">Dynatrace / ELK</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-label">Frameworks & Tools</div>
+          <div class="skill-tags">
+            <span class="skill-tag">FastAPI / Flask</span>
+            <span class="skill-tag">ReactJS</span>
+            <span class="skill-tag">NodeJS</span>
+            <span class="skill-tag">ROS2</span>
+            <span class="skill-tag">DJI MSDK / Cloud SDK</span>
+            <span class="skill-tag">MongoDB</span>
+            <span class="skill-tag">Media-MTX</span>
+            <span class="skill-tag">Zarf</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-label">Drone & Robotics</div>
+          <div class="skill-tags">
+            <span class="skill-tag">DJI Mobile SDK</span>
+            <span class="skill-tag">DJI Cloud SDK</span>
+            <span class="skill-tag">ROS2</span>
+            <span class="skill-tag">Object Tracking</span>
+            <span class="skill-tag">Payload SDK</span>
+            <span class="skill-tag">Collision Avoidance</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="section" id="experience">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Work Experience</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="experience-list">
+
+      <!-- CODITAS -->
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-company">Coditas</div>
+          <div class="exp-role">AI Backend Engineer</div>
+          <div class="exp-period">Aug 2025 — Present</div>
+        </div>
+        <div class="exp-content">
+          <p class="exp-overview">
+            Embedded in a client engagement to modernize a legacy enterprise GRC (Governance, Risk & Compliance) platform using an AI-first approach. Designed and built AI automation tools — using LangGraph, RAG pipelines, MCP servers, and Windsurf Workflows — that convert hours of manual developer work into minutes of guided automation. Worked across code conversion, upgrade tooling, audit trail automation, and API registration workflows.
+          </p>
+
+          <div class="project-cards">
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Business Rule (BR) Generation from English Statements</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                An AI service that converts plain English statements into valid Business Rules (BRs) for the client's GRC platform. Uses a LangGraph pipeline with multi-node processing, where each node enriches the intermediate representation with form, field, and module metadata. Employs a RAG architecture (Retrieval-Augmented Generation) to resolve the platform-specific metadata required for valid BR output.
+              </p>
+              <ul class="card-highlights">
+                <li>Designed multi-node LangGraph pipeline with per-node metadata enrichment for BR generation.</li>
+                <li>Built a RAG system to retrieve form/field/module metadata required for valid business rule construction.</li>
+                <li>Reduced manual BR authoring effort by approximately 40%, dramatically accelerating developer workflow.</li>
+                <li>Handled JS-to-BR conversion pipeline, including legacy JavaScript version compatibility via existing converter APIs.</li>
+              </ul>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">LangGraph</span>
+                <span class="card-tag">RAG</span>
+                <span class="card-tag">FastAPI</span>
+                <span class="card-tag">Vector DB</span>
+                <span class="card-tag">AI Engineering</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Upgrade Automation — CEC File Diff & Conflict Resolution</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A web application that automates the painful multi-tenant upgrade process for the client's GRC platform. When a base platform version is upgraded, all per-customer customizations (stored as CEC files) must be compared and conflicts resolved. This tool parses large CEC files (10,000+ objects), stores them in a purpose-designed SQL schema, and presents a diff pane UI showing differences between the old base, the customer's customized version, and the new base instance.
+              </p>
+              <ul class="card-highlights">
+                <li>Wrote a custom CEC file parser handling 10,000+ heterogeneous objects per file.</li>
+                <li>Designed the SQL schema isolating project/module-level CEC data for precise querying.</li>
+                <li>Implemented background task processing via RabbitMQ consumer with async Redis pub-sub event streaming to the frontend over WebSockets.</li>
+                <li>Integrated live metadata API calls to the latest instance during processing to ensure freshness of object attributes.</li>
+                <li>Built a diff pane UI allowing users to view and reconcile changes across three versions simultaneously.</li>
+              </ul>
+              <div class="card-todo">Add: average processing time for a typical CEC file (e.g. X seconds for ~10k objects), and number of customer instances this has been used on so far.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">FastAPI</span>
+                <span class="card-tag">RabbitMQ</span>
+                <span class="card-tag">Redis Pub-Sub</span>
+                <span class="card-tag">WebSockets</span>
+                <span class="card-tag">SQL</span>
+                <span class="card-tag">ReactJS</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">MCP Service & Windsurf Workflow — Change History Report Registration</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A custom MCP (Model Context Protocol) server integrated into Windsurf Workflows to automate the registration of audit/change history for database form columns. Previously, a customer success team member would spend 3–4 hours per form manually querying databases, validating columns against multiple tables, and writing SQL registration scripts. This workflow reduces that to 6–7 minutes.
+              </p>
+              <ul class="card-highlights">
+                <li>Built an async MCP server with tools that execute multi-step database queries, validate column presence across Audit Tables, Default Columns Table, View Table, and Section assignments.</li>
+                <li>Designed dynamic multi-instance database connectivity, connecting to different instance databases at runtime based on request context — identified and fixed a critical single-connection architectural flaw in a peer's implementation before it caused production issues.</li>
+                <li>Wrote a Windsurf Workflow that orchestrates the MCP tools in sequence from a single plain-language user input.</li>
+                <li>Reduced the CSS team's time per form registration from 3–4 hours to ~7 minutes — an approximately 97% reduction in time spent.</li>
+              </ul>
+              <div class="card-todo">Add: number of forms onboarded so far, and rough estimate of total hours saved for the CSS team since deployment.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">MCP Protocol</span>
+                <span class="card-tag">Windsurf Workflows</span>
+                <span class="card-tag">Async Python</span>
+                <span class="card-tag">SQL</span>
+                <span class="card-tag">Multi-tenant DB</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">MCP Service & Windsurf Workflow — Business API Registration Automation</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                When new forms are registered on the GRC platform, associated Business APIs must also be registered by executing a sequence of commands on the instance followed by a Jenkins job. This was a fully manual, error-prone process. Built in close collaboration with the client's engineering team, this project wraps those instance commands into internal APIs and integrates them into an MCP service and Windsurf Workflow, automating the full registration sequence.
+              </p>
+              <ul class="card-highlights">
+                <li>Collaborated with the client's engineering team to map and wrap instance-level CLI commands into REST APIs.</li>
+                <li>Built MCP tools that call these APIs in the correct sequence and verify their results.</li>
+                <li>Wrote a Windsurf Workflow that orchestrates the entire Business API registration process end-to-end.</li>
+                <li>Improved CSS team work efficiency by approximately 40% for this class of task.</li>
+              </ul>
+              <div class="card-todo">Add: average number of Business API registrations per week, and estimated time saved per registration.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">MCP Protocol</span>
+                <span class="card-tag">Windsurf Workflows</span>
+                <span class="card-tag">REST APIs</span>
+                <span class="card-tag">Jenkins</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Bulk Business Rule Auto-Copy with Concurrency Management</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                After BRs are generated, they must be saved back to the client's instance via their Bulk BR API. This API has several hard constraints — only one parallel request per form, a maximum queue size, a 100-BR-per-request limit, and an async job-tracking model. Designed the entire backend architecture to work within these constraints at scale, using Redis locks, RabbitMQ background processors, and WebSocket progress streaming.
+              </p>
+              <ul class="card-highlights">
+                <li>Implemented form-level and instance-level Redis locks to prevent concurrent duplicate API triggers for the same form/instance pair.</li>
+                <li>Designed a RabbitMQ consumer background processor that batches BRs into ≤100-item chunks, triggers the Bulk API, polls for job status, and streams progress over Redis pub-sub → WebSocket.</li>
+                <li>Handled all API limitations gracefully without exposing complexity to the end user — real-time progress is visible throughout.</li>
+              </ul>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">Redis</span>
+                <span class="card-tag">RabbitMQ</span>
+                <span class="card-tag">WebSockets</span>
+                <span class="card-tag">Async Python</span>
+                <span class="card-tag">Concurrency Design</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FLYTBASE -->
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-company">FlytBase</div>
+          <div class="exp-role">Robotics & Backend Developer</div>
+          <div class="exp-period">Oct 2023 — Apr 2025</div>
+        </div>
+        <div class="exp-content">
+          <p class="exp-overview">
+            Full-stack drone automation platform development: architected Python cloud microservices for real-time drone and docking station telemetry, built and maintained the FlytBase Android application (Kotlin, DJI MSDK), worked on on-premise/air-gapped deployments, and contributed to internal research projects in object tracking and safety systems. Also served on the Fire Fighting Team handling critical production incidents.
+          </p>
+
+          <div class="project-cards">
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Abstraction Layer Microservice</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A stateless, horizontally scalable Python microservice serving as the middleware between DJI drone/dock hardware (via DJI Cloud SDK) and the FlytBase cloud/web layer. Ingests real-time telemetry over MQTT, processes and routes data to HTTP services via Flask APIs, and handles inbound control commands from web clients.
+              </p>
+              <ul class="card-highlights">
+                <li>Built with asyncio and aio-paho-mqtt for non-blocking, high-throughput handling of real-time telemetry across multiple MQTT topics simultaneously.</li>
+                <li>Used Redis as a distributed in-memory store for shared drone state and job queues, ensuring consistency across multiple service instances.</li>
+                <li>Implemented concurrency-safe job execution layer with mutex patterns to prevent command collisions in multi-instance deployments.</li>
+                <li>Supports MQTT, HTTP, and RabbitMQ (RMQ) protocols for integration across the drone ecosystem including sensors, manual control, and frontend command interfaces.</li>
+                <li>Built frequency throttling for outbound velocity commands during manual drone control to prevent hardware overload.</li>
+                <li>Integrated Prometheus/Grafana-compatible metrics, retry logic, and circuit breakers for production observability and fault tolerance.</li>
+              </ul>
+              <div class="card-todo">Add: approximate number of MQTT messages processed per second at peak load, and number of drone/dock instances this service manages in production.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">asyncio</span>
+                <span class="card-tag">MQTT</span>
+                <span class="card-tag">Redis</span>
+                <span class="card-tag">Flask</span>
+                <span class="card-tag">RabbitMQ</span>
+                <span class="card-tag">Prometheus</span>
+                <span class="card-tag">DJI Cloud SDK</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">FlytBase Android Application</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A production Kotlin Android application deployed on DJI Smart Remote Controllers for autonomous drone operations. Handles real-time drone control, docking station management, cloud media sync, 4G connectivity monitoring, live video streaming, and DJI camera operations — all integrated through the FlytBase MQTT backend.
+              </p>
+              <ul class="card-highlights">
+                <li>Implemented a resilient MQTT communication layer (PAHO client) with automatic reconnection, QoS handling, and message persistence for reliable operation in variable network environments.</li>
+                <li>Engineered a parallel media upload pipeline to AWS S3 using WorkManager + Kotlin Coroutines, with flight metadata tagging (GPS, timestamps, payload config) stored in Room (SQLite) and fault-tolerant resume on restart.</li>
+                <li>Built 4G network monitoring UI with StateFlow/LiveData reactive rendering, automatic failsafe (Return-To-Home) on 4G dropout, and local connectivity metric logging.</li>
+                <li>Refactored video streaming architecture for live drone feed relay to Millicast Cloud, supporting efficient 4G variable-bandwidth streaming via SharedFlow state management.</li>
+                <li>Followed MVVM architecture with Hilt dependency injection; integrated Crashlytics and Firebase Analytics for production monitoring.</li>
+                <li>Designed and maintained CI/CD workflows for automated APK builds, code signing, and staged deployment to internal testers.</li>
+                <li>Fixed a critical NFZ/Geofence sync bug (previously failing ~70% of the time) by redesigning DJI hardware event handling and state propagation — post-fix success rate reached ~95%.</li>
+              </ul>
+              <div class="card-todo">Add: approximate number of enterprise customers / drone operators using this app, and the number of DJI drone/dock models it supports.</div>
+              <div class="card-tags">
+                <span class="card-tag">Kotlin</span>
+                <span class="card-tag">Android Studio</span>
+                <span class="card-tag">DJI Mobile SDK</span>
+                <span class="card-tag">MQTT</span>
+                <span class="card-tag">AWS S3</span>
+                <span class="card-tag">WorkManager</span>
+                <span class="card-tag">Coroutines</span>
+                <span class="card-tag">MVVM / Hilt</span>
+                <span class="card-tag">Millicast</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Airspace Monitoring Microservice</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A cloud microservice that monitors drone airspace in real-time using sensor data from CasiaG and AirSense systems. Provides situational awareness of the drone's operating environment to the FlytBase platform.
+              </p>
+              <ul class="card-highlights">
+                <li>Ingests live sensor feeds from CasiaG and AirSense airspace monitoring hardware.</li>
+                <li>Processes and propagates airspace events to the cloud platform and frontend for real-time operator awareness.</li>
+              </ul>
+              <div class="card-todo">Add: what specific airspace events are detected (e.g. conflicting traffic, geofence breaches), and any latency targets this service operates under.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">MQTT</span>
+                <span class="card-tag">CasiaG</span>
+                <span class="card-tag">AirSense</span>
+                <span class="card-tag">Real-time Systems</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Tactical Deconfliction System</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A GoLang-based system for monitoring multiple intra-organization drones in shared airspace and executing automated failsafe actions when deconfliction thresholds are breached. Designed for environments where multiple drones operate simultaneously and must avoid conflicts autonomously.
+              </p>
+              <ul class="card-highlights">
+                <li>Built in GoLang for high-performance, concurrent monitoring of multiple drone telemetry streams.</li>
+                <li>Detects proximity and deconfliction violations across drones within the same organization's airspace.</li>
+                <li>Executes automated failsafe actions (e.g. hold, reroute, RTH) based on configurable threshold rules.</li>
+              </ul>
+              <div class="card-todo">Add: maximum number of drones monitored simultaneously, and the specific failsafe action types that are supported.</div>
+              <div class="card-tags">
+                <span class="card-tag">GoLang</span>
+                <span class="card-tag">Drone Telemetry</span>
+                <span class="card-tag">Real-time Monitoring</span>
+                <span class="card-tag">Failsafe Systems</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">On-Premise Deployment (Air-Gapped & Hybrid)</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                Delivered the complete on-premise version of the FlytBase platform for enterprise customers operating in air-gapped or hybrid network environments where no internet access is permitted. Worked across the full stack — from the FlytAIR Edge Device (ROS2-based) to Kubernetes-managed application deployment — to make the entire platform self-contained and deployable offline.
+              </p>
+              <ul class="card-highlights">
+                <li>Developed ROS2 nodes for video streaming on the FlytAIR Edge Device with support for Media-MTX, Agora, and Ant-Media stream service providers.</li>
+                <li>Added Media-MTX platform support in the streaming management service for secure edge-local drone video delivery.</li>
+                <li>Managed on-premise deployment toolchain: Kubernetes, Zarf (air-gapped Kubernetes packaging), K9s, and GitHub CI/CD pipelines.</li>
+                <li>Worked directly with customer network architecture to design deployment topology for both air-gapped and hybrid environments.</li>
+                <li>Built, modified, and released the full FlytBase application bundle including the edge computing device.</li>
+              </ul>
+              <div class="card-todo">Add: number of enterprise on-prem customers deployed, and industries they operate in (e.g. defense, energy, logistics).</div>
+              <div class="card-tags">
+                <span class="card-tag">ROS2</span>
+                <span class="card-tag">Kubernetes</span>
+                <span class="card-tag">Zarf</span>
+                <span class="card-tag">K9s</span>
+                <span class="card-tag">Media-MTX</span>
+                <span class="card-tag">GitHub CI/CD</span>
+                <span class="card-tag">Edge Computing</span>
+                <span class="card-tag">Python</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Object Tracking System (Detect & Track)</div>
+                <span class="card-badge badge-internal">Internal</span>
+              </div>
+              <p class="card-desc">
+                An internal drone-based object tracking system where a user selects a target in the live video feed and the drone autonomously follows it. Built a full vision-to-control pipeline: from user selection → CV tracker initialization → bounding box tracking → pixel displacement calculation → proportional velocity commands sent to the drone SDK.
+              </p>
+              <ul class="card-highlights">
+                <li>Evaluated YOLOv5 and SSD MobileNet for detection/re-identification but transitioned to OpenCV CSRT/KCF trackers for lower latency and edge suitability.</li>
+                <li>Developed a custom proportional controller converting pixel displacement of the tracked object from frame center into drone velocity commands.</li>
+                <li>Tightly coupled the tracking loop with the DJI drone SDK for smooth transitions between autonomous tracking and manual override.</li>
+                <li>Optimized for low-latency edge deployment; modular design supports future swap of vision models or tracking algorithms.</li>
+              </ul>
+              <div class="card-todo">Add: approximate end-to-end tracking latency (e.g. Xms frame-to-command), and any frame rates or hardware targets this was optimized for.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">OpenCV</span>
+                <span class="card-tag">YOLOv5</span>
+                <span class="card-tag">CSRT / KCF</span>
+                <span class="card-tag">DJI SDK</span>
+                <span class="card-tag">Proportional Control</span>
+                <span class="card-tag">Edge Computing</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">F.L.O.I.D. — First Line of Incident Defence</div>
+                <span class="card-badge badge-internal">Internal</span>
+              </div>
+              <p class="card-desc">
+                A Raspberry Pi–based safety monitoring device deployed at FlytBase HQ to prevent drone crashes during indoor test flights. Continuously monitors drone telemetry and triggers audible alarms and sirens whenever a configurable safety threshold is breached.
+              </p>
+              <ul class="card-highlights">
+                <li>Deployed on Raspberry Pi for low-cost, always-on monitoring at the test facility.</li>
+                <li>Monitors real-time drone telemetry for safety threshold breaches (altitude, proximity, battery, etc.).</li>
+                <li>Triggers physical alarm/siren outputs on breach detection for immediate human-in-the-loop response.</li>
+              </ul>
+              <div class="card-todo">Add: specific safety parameters monitored (altitude ceiling, minimum battery %, proximity to walls, etc.) and whether this is still in active use.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">Raspberry Pi</span>
+                <span class="card-tag">MQTT</span>
+                <span class="card-tag">Real-time Monitoring</span>
+                <span class="card-tag">IoT</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ALGOBULLS -->
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-company">AlgoBulls</div>
+          <div class="exp-role">Python Developer</div>
+          <div class="exp-period">Jan 2023 — Oct 2023</div>
+        </div>
+        <div class="exp-content">
+          <p class="exp-overview">
+            Developed and optimized algorithmic trading strategies in Python, integrated broker APIs with the AlgoBulls trading platform, maintained open-source Python repositories, and built data analysis pipelines for trade performance evaluation. Started as intern, converted to full-time after 6 months.
+          </p>
+          <div class="project-cards">
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Algorithmic Trading Strategy Development & Broker API Integration</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                Developed automated stock trading strategies using technical analysis indicators (via TA-Lib) and integrated multiple broker APIs into the AlgoBulls platform. Maintained and optimized open-source Python packages used by the platform's user community.
+              </p>
+              <ul class="card-highlights">
+                <li>Designed and implemented multiple algorithmic trading strategies in Python, covering entry/exit logic, position sizing, and risk management rules.</li>
+                <li>Integrated broker APIs into the AlgoBulls platform to enable live automated trade execution for platform users.</li>
+                <li>Maintained pyalgotrading and pyalgostrategypool open-source repositories on GitHub, following PEP-8 standards and managing contributions.</li>
+                <li>Built data analysis pipelines using pandas and related libraries to evaluate strategy P&amp;L reports and identify optimization opportunities.</li>
+                <li>Profiled and optimized strategies with high time or memory complexity, improving their viability for live trading.</li>
+              </ul>
+              <div class="card-todo">Add: number of broker integrations completed, number of trading strategies developed, and any notable performance improvements from optimization work (e.g. X% reduction in execution time).</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">TA-Lib</span>
+                <span class="card-tag">pandas</span>
+                <span class="card-tag">Algorithmic Trading</span>
+                <span class="card-tag">Broker APIs</span>
+                <span class="card-tag">Code Optimization</span>
+                <span class="card-tag">Open Source</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTEGRATED ACTIVE MONITORING -->
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-company">Integrated Active Monitoring</div>
+          <div class="exp-role">Software Developer Intern</div>
+          <div class="exp-period">Oct 2021 — Oct 2022</div>
+        </div>
+        <div class="exp-content">
+          <p class="exp-overview">
+            Computer vision engineering for retail and warehouse analytics. Built end-to-end AI solutions — from model deployment on edge hardware (Jetson Nano) to database storage, frontend visualization, and production deployment — for CCTV-based monitoring and analytics services.
+          </p>
+          <div class="project-cards">
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Fisheye People Detection & Customer Movement Heatmap</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                An edge-deployed AI system that analyzes fisheye camera feeds in retail stores to track customer movement patterns and generate floor heatmaps. Helps businesses identify high-traffic zones for optimizing product placement, advertising, and store layout.
+              </p>
+              <ul class="card-highlights">
+                <li>Deployed RAPiD-CNN (fisheye-optimized people detection model) on Jetson Nano for real-time frame processing at the edge.</li>
+                <li>Integrated Byte Tracker algorithm for persistent per-person tracking with unique Tracker IDs across frames.</li>
+                <li>Stored detection metadata (bounding boxes, tracker IDs, timestamps) in MongoDB for time-range querying.</li>
+                <li>Built a ReactJS frontend where users select a time range, and the system maps detections onto the store floor plan to generate an animated heatmap.</li>
+                <li>Deployed and maintained the full pipeline in a production environment serving real retail clients.</li>
+              </ul>
+              <div class="card-todo">Add: number of retail stores deployed in, average frames processed per second on Jetson Nano, and any business outcomes reported by clients (e.g. sales uplift from re-arranged displays).</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">RAPiD-CNN</span>
+                <span class="card-tag">Byte Tracker</span>
+                <span class="card-tag">Jetson Nano</span>
+                <span class="card-tag">OpenCV</span>
+                <span class="card-tag">MongoDB</span>
+                <span class="card-tag">ReactJS</span>
+                <span class="card-tag">Edge AI</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Warehouse Inventory Change Detection</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                An AI-powered inventory monitoring system using overhead CCTV cameras to automatically detect and log changes in warehouse stock. Gives warehouse managers a high-level daily audit trail of inventory movements — including which sections changed, by what percentage, and which goods remained untouched.
+              </p>
+              <ul class="card-highlights">
+                <li>Processed time-interval CCTV frames captured from an elevated angle using computer vision change detection algorithms.</li>
+                <li>Detected inventory change events between user-specified time ranges, with percentage change estimation and section-level localization.</li>
+                <li>Surfaced stagnant sections (unchanged inventory) to help identify slow-moving or zero-demand goods.</li>
+                <li>Built and deployed the full pipeline including frontend visualization for warehouse management teams.</li>
+              </ul>
+              <div class="card-todo">Add: the change detection algorithm or model used (e.g. frame differencing, specific deep learning model), number of warehouse clients deployed in, and any inventory accuracy improvements measured.</div>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">OpenCV</span>
+                <span class="card-tag">Computer Vision</span>
+                <span class="card-tag">MongoDB</span>
+                <span class="card-tag">Docker</span>
+                <span class="card-tag">RabbitMQ</span>
+                <span class="card-tag">ReactJS</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- YUN SOLUTIONS -->
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-company">Yun Solutions</div>
+          <div class="exp-role">Data Analyst Intern</div>
+          <div class="exp-period">Oct 2022 — Dec 2022</div>
+        </div>
+        <div class="exp-content">
+          <p class="exp-overview">
+            Built web scraping and NLP pipelines for financial data extraction and sentiment analysis. Worked on automating data collection from public web sources and feeding results into downstream language model pipelines.
+          </p>
+          <div class="project-cards">
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Stock Market YouTube Video Data Extraction Pipeline</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                An automated pipeline that queries and scrapes YouTube at scheduled intervals to extract the latest stock market–related video content. Consolidates videos in a database, extracts transcripts, and feeds the text into a downstream language model for market sentiment analysis.
+              </p>
+              <ul class="card-highlights">
+                <li>Built with Selenium WebDriver for scheduled web scraping and data extraction from YouTube.</li>
+                <li>Automated transcript extraction from video content for downstream NLP processing.</li>
+                <li>Pipeline feeds into a language model for stock market situation analysis and user-queryable news summaries.</li>
+              </ul>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">Selenium</span>
+                <span class="card-tag">NLP</span>
+                <span class="card-tag">Web Scraping</span>
+                <span class="card-tag">NLTK</span>
+                <span class="card-tag">pandas</span>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="card-header">
+                <div class="card-title">Play Store Review Sentiment Analysis</div>
+                <span class="card-badge badge-production">Production</span>
+              </div>
+              <p class="card-desc">
+                A sentiment analysis pipeline that scrapes user reviews from Play Store application pages and classifies them using Google's Sentiment Analysis API combined with spaCy and TextBlob for text preprocessing and analysis.
+              </p>
+              <ul class="card-highlights">
+                <li>Scraped review data from Play Store pages using Selenium.</li>
+                <li>Applied NLP preprocessing (tokenization, stopword removal, regex cleaning) before sentiment classification.</li>
+                <li>Used Google Sentiment Analysis API alongside TextBlob and spaCy for polarity and subjectivity scoring.</li>
+              </ul>
+              <div class="card-tags">
+                <span class="card-tag">Python</span>
+                <span class="card-tag">Selenium</span>
+                <span class="card-tag">spaCy</span>
+                <span class="card-tag">TextBlob</span>
+                <span class="card-tag">Google NLP API</span>
+                <span class="card-tag">Regex</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAL PROJECTS -->
+<section class="section" id="projects">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Personal Projects</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="standalone-grid">
+
+      <div class="standalone-card">
+        <div class="standalone-icon">🤖</div>
+        <div class="standalone-title">Multimodal Chatbot Backend</div>
+        <p class="standalone-desc">
+          A scalable multimodal chatbot backend built with FastAPI, Redis (session management), ChromaDB (vector storage), HuggingFace Embeddings (all-MiniLM-L6-v2), and Llama-2 via llama-cpp-python. Addresses context-aware dialogue with vector-indexed chat history retrieval, optimized embedding latency, and distributed session state. Designed for future audio input via Whisper and MCP adoption.
+        </p>
+        <div class="card-tags" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+          <span class="card-tag">FastAPI</span>
+          <span class="card-tag">Redis</span>
+          <span class="card-tag">ChromaDB</span>
+          <span class="card-tag">Llama-2</span>
+          <span class="card-tag">HuggingFace</span>
+          <span class="card-tag">MCP</span>
+        </div>
+        <div class="standalone-todo">Add GitHub link and any benchmark metrics (e.g. retrieval latency, concurrent session capacity).</div>
+      </div>
+
+      <div class="standalone-card">
+        <div class="standalone-icon">😶</div>
+        <div class="standalone-title">Interviewee Behavior Analysis</div>
+        <p class="standalone-desc">
+          An emotion detection tool that analyzes stress levels in interview candidates using video and audio processing. Processes facial expressions and audio cues to produce behavioral insights useful for HR analytics or interview coaching applications.
+        </p>
+        <div class="card-tags" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+          <span class="card-tag">Python</span>
+          <span class="card-tag">OpenCV</span>
+          <span class="card-tag">Emotion Detection</span>
+          <span class="card-tag">Audio Processing</span>
+        </div>
+        <div class="standalone-todo">Add: models used for emotion detection (e.g. DeepFace, FER), audio analysis method, and GitHub link.</div>
+      </div>
+
+      <div class="standalone-card">
+        <div class="standalone-icon">💊</div>
+        <div class="standalone-title">Smart Inhaler (IoT)</div>
+        <p class="standalone-desc">
+          An IoT-enabled inhaler usage tracking system built on NodeMCU. Monitors inhaler usage events and sends real-time data to a companion mobile app, allowing patients and caregivers to track medication adherence and usage patterns.
+        </p>
+        <div class="card-tags" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+          <span class="card-tag">NodeMCU</span>
+          <span class="card-tag">IoT</span>
+          <span class="card-tag">Mobile App</span>
+          <span class="card-tag">Embedded Systems</span>
+        </div>
+        <div class="standalone-todo">Add: communication protocol used (MQTT/HTTP/BLE), mobile app platform (Android/iOS), and whether this was a college or independent project.</div>
+      </div>
+
+      <div class="standalone-card">
+        <div class="standalone-icon">📝</div>
+        <div class="standalone-title">Quiz Hub</div>
+        <p class="standalone-desc">
+          A FastAPI-powered MCQ quiz platform for students. Supports timed quiz sessions, multiple question sets, and result evaluation. Built as a clean, deployable web application with a RESTful API backend.
+        </p>
+        <div class="card-tags" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+          <span class="card-tag">FastAPI</span>
+          <span class="card-tag">Python</span>
+          <span class="card-tag">REST API</span>
+          <span class="card-tag">Web App</span>
+        </div>
+        <div class="standalone-todo">Add: frontend tech used, any database (SQL/MongoDB), and GitHub link or live demo.</div>
+      </div>
+
+      <div class="standalone-card">
+        <div class="standalone-icon">📄</div>
+        <div class="standalone-title">Document Scanner App (Android)</div>
+        <p class="standalone-desc">
+          An Android application that uses OpenCV's Java SDK to capture a document photo and transform it into a clean, readable scanned document — applying perspective correction, thresholding, and edge detection for high-quality output.
+        </p>
+        <div class="card-tags" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+          <span class="card-tag">Android</span>
+          <span class="card-tag">OpenCV Java SDK</span>
+          <span class="card-tag">Image Processing</span>
+          <span class="card-tag">Kotlin/Java</span>
+        </div>
+        <div class="standalone-todo">Add: GitHub link, and whether this is available on Play Store.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TODOS SUMMARY -->
+<section class="section" id="todos">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Open TODOs</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="todos-section">
+      <div class="todos-title">📌 Metrics & Details to Fill In</div>
+      <div class="todos-subtitle">These are the places where adding real numbers or links will most significantly strengthen the portfolio. Fill these in and remove the TODO markers.</div>
+
+      <div class="todo-list">
+        <div class="todo-item">
+          <div class="todo-num">01</div>
+          <div><strong>Coditas — BR Generation:</strong> What is the volume of BRs generated so far? What was the baseline time to write one BR manually vs now?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">02</div>
+          <div><strong>Coditas — CEC File Processing:</strong> How long does it take to process a ~10,000-object CEC file? How many customer upgrade cycles has this tool handled?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">03</div>
+          <div><strong>Coditas — Change History MCP:</strong> How many forms have been onboarded using this workflow? Estimated total hours saved for the CSS team?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">04</div>
+          <div><strong>Coditas — Business API Automation:</strong> How many Business API registrations per week? What was the manual time per registration?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">05</div>
+          <div><strong>FlytBase — Abstraction Layer:</strong> MQTT messages per second at peak? Number of drone/dock units managed in production?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">06</div>
+          <div><strong>FlytBase — Android App:</strong> Number of enterprise customers using the app? Number of DJI models supported?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">07</div>
+          <div><strong>FlytBase — Airspace Monitoring:</strong> Specific events detected (traffic, geofences)? Any latency SLAs?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">08</div>
+          <div><strong>FlytBase — Tactical Deconfliction:</strong> Max simultaneous drones monitored? Supported failsafe action types?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">09</div>
+          <div><strong>FlytBase — On-Premise:</strong> Number of on-prem enterprise customers? Industries (defense, energy, logistics)?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">10</div>
+          <div><strong>FlytBase — Object Tracking:</strong> End-to-end tracking latency (ms)? Hardware and FPS targets?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">11</div>
+          <div><strong>FlytBase — F.L.O.I.D.:</strong> Specific thresholds monitored (altitude, battery %, proximity)? Is it still in use?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">12</div>
+          <div><strong>AlgoBulls:</strong> Number of broker integrations completed? Number of strategies developed? Performance improvement from optimization?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">13</div>
+          <div><strong>IAM — Fisheye Heatmap:</strong> Stores deployed in? FPS on Jetson Nano? Any client-reported business outcomes?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">14</div>
+          <div><strong>IAM — Warehouse Inventory:</strong> Change detection algorithm/model used? Number of warehouses deployed in?</div>
+        </div>
+        <div class="todo-item">
+          <div class="todo-num">15</div>
+          <div><strong>Personal Projects:</strong> GitHub links for all repos. Live demo links where available.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-name">Prithviraj Mohan Gotepatil</div>
+    <div class="footer-tagline">SOFTWARE DEVELOPER · PUNE, INDIA · prithvirajgotepatil@gmail.com</div>
+    <div class="divider" style="margin: 1.5rem auto;"></div>
+    <div class="print-note">This portfolio was generated for Fiverr profile use. Fill in TODO items to maximize impact.</div>
+  </div>
+</footer>
+
+</body>
+</html>
