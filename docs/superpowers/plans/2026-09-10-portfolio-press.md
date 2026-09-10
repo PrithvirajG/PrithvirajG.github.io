@@ -180,7 +180,7 @@ paper: terrain
 ---
 desk: Markets
 name: AlgoBulls and Yun Solutions
-role: Python Developer, then Data Analyst
+role: Python Developer at AlgoBulls, Data Analyst at Yun Solutions
 period: 2022 to 2023
 start: "2022-10"
 blurb: Automated trading strategies and the broker plumbing beneath them, plus scraping and language pipelines feeding market sentiment analysis.
@@ -212,7 +212,7 @@ title: One service between the drone and the cloud
 employer: flytbase
 status: production
 disciplines: [robotics, infrastructure]
-stack: [Python, asyncio, MQTT, Redis, Flask, RabbitMQ]
+stack: [Python, asyncio, MQTT, Redis, Flask, RabbitMQ, Prometheus, DJI Cloud SDK]
 summary: Stateless, horizontally scalable middleware between DJI hardware and the cloud, carrying live telemetry up and control commands back down.
 highlights:
   - Runs on asyncio so a slow MQTT topic never blocks a fast one.
@@ -221,7 +221,6 @@ highlights:
   - Outbound velocity commands are throttled during manual control so the hardware is never overrun.
   - Retries, circuit breakers, and metrics were in the first version, not a later patch.
 metrics:
-  - { value: "70 to 95%", label: "Geofence sync success after redesign", accent: true }
   - { value: "3", label: "Protocols spoken" }
 openQuestions:
   - Peak MQTT messages per second.
