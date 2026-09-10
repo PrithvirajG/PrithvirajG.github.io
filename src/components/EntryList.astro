@@ -25,7 +25,7 @@ const { entries } = Astro.props;
   .note { font-size: 15px; color: var(--ink-soft); margin-top: 3px; max-width: 44em; }
   .who2 { font-family: var(--chart); font-size: 13px; color: var(--ink-soft); }
   .yr { font-family: var(--chart); font-size: 13px; color: var(--magenta); text-align: right; }
-  .pending .name, .pending .note, .pending .who2, .pending .yr { color: #9A9B8E; }
+  .pending .name, .pending .note, .pending .who2, .pending .yr { color: var(--ink-pending); }
   .pending .name { font-style: italic; }
   @media (max-width: 820px) {
     .entry { grid-template-columns: 1fr; gap: 4px; }
