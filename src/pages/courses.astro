@@ -6,7 +6,13 @@ import EntryList from '../components/EntryList.astro';
 import Awaiting from '../components/Awaiting.astro';
 
 const rows = (await getCollection('courses')).sort((a, b) => a.data.order - b.data.order);
-const real = rows.map(c => ({ name: c.data.name, note: c.data.note, who: c.data.issuer, when: c.data.year }));
+const real = rows.map(c => ({
+  name: c.data.name,
+  note: c.data.note,
+  who: c.data.issuer,
+  when: c.data.year,
+  href: c.data.url,
+}));
 const placeholder = [
   { name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true },
   { name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true },
