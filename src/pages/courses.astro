@@ -9,6 +9,7 @@ const rows = (await getCollection('courses')).sort((a, b) => a.data.order - b.da
 const real = rows.map(c => ({
   name: c.data.name,
   note: c.data.note,
+  tags: c.data.tags,
   who: c.data.issuer,
   when: c.data.year,
   href: c.data.url,

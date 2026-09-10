@@ -1,5 +1,5 @@
 ---
-interface Entry { name: string; note?: string; who?: string; when?: string; href?: string; pending?: boolean }
+interface Entry { name: string; note?: string; tags?: string[]; who?: string; when?: string; href?: string; pending?: boolean }
 interface Props { entries: Entry[]; }
 const { entries } = Astro.props;
 ---
@@ -9,6 +9,7 @@ const { entries } = Astro.props;
       <div>
         <div class="name">{e.href ? <a href={e.href}>{e.name}</a> : e.name}</div>
         {e.note && <div class="note">{e.note}</div>}
+        {e.tags && e.tags.length > 0 && <div class="tags">{e.tags.join(', ')}</div>}
       </div>
       <div class="who2">{e.who}</div>
       <div class="yr">{e.when}</div>
@@ -23,6 +24,8 @@ const { entries } = Astro.props;
   .name { font-size: 21px; line-height: 1.2; }
   .name a { text-decoration-color: var(--magenta); text-underline-offset: 4px; }
   .note { font-size: 15px; color: var(--ink-soft); margin-top: 3px; max-width: 44em; }
+  .tags { font-family: var(--chart); font-size: 12.5px; color: var(--ink-soft); margin-top: 5px; max-width: 44em; }
+  .pending .tags { color: var(--ink-pending); }
   .who2 { font-family: var(--chart); font-size: 13px; color: var(--ink-soft); }
   .yr { font-family: var(--chart); font-size: 13px; color: var(--magenta); text-align: right; }
   .pending .name, .pending .note, .pending .who2, .pending .yr { color: var(--ink-pending); }
