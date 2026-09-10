@@ -58,6 +58,7 @@ const courses = defineCollection({
     year: z.string(),
     note: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    certificate: z.string().optional(),
     url: z.string().url().optional(),
     order: z.number(),
   }),

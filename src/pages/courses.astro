@@ -12,7 +12,8 @@ const real = rows.map(c => ({
   tags: c.data.tags,
   who: c.data.issuer,
   when: c.data.year,
-  href: c.data.url,
+  href: c.data.certificate,
+  verify: c.data.url,
 }));
 const placeholder = [
   { name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true },
