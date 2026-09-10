@@ -48,7 +48,7 @@ a { color: inherit; }
   font-family: var(--chart); font-size: 13px; border-left: 1px solid var(--rule); white-space: nowrap; }
 
 .sheet { position: sticky; top: var(--strip); height: calc(100vh - var(--strip)); overflow: hidden;
-  display: grid; grid-template-columns: 112px minmax(0, 1fr);
+  display: grid; grid-template-columns: 112px minmax(0, 1fr); scroll-margin-top: var(--strip);
   border-top: 1px solid var(--ink); box-shadow: 0 -20px 44px -30px rgba(20, 21, 15, .55); }
 .spacer { height: 0; }
 .col { padding: 26px 30px 40px; max-width: 1080px; will-change: transform; }
@@ -84,5 +84,5 @@ a { color: inherit; }
   .col { transform: none !important; }
   .pin { display: none; }
   .w { color: var(--ink); }
-  .w.key { color: var(--magenta); }
+  .w.key, .key { color: var(--magenta); }
 }
