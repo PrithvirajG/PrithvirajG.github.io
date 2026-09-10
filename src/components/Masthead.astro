@@ -1,0 +1,11 @@
+---
+interface Props { first: string; last: string; }
+const { first, last } = Astro.props;
+---
+<h1 class="masthead">{first}<span>{last}</span></h1>
+
+<style>
+  .masthead { font-size: clamp(44px, 10.5vw, 140px); line-height: .82; letter-spacing: -.03em;
+    font-weight: 500; font-optical-sizing: auto; }
+  .masthead span { display: block; font-style: italic; font-weight: 300; letter-spacing: -.02em; }
+</style>

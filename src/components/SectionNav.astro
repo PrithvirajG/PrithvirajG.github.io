@@ -1,0 +1,14 @@
+---
+import { SECTIONS } from '../lib/sections';
+interface Props { current: string; }
+const { current } = Astro.props;
+---
+<div class="strip">
+  <div class="who"><a href="/" style="text-decoration:none">Prithviraj Gotepatil</a></div>
+  <nav aria-label="Sections">
+    {SECTIONS.map(s => (
+      <a href={s.href} aria-current={s.href === current ? 'page' : undefined}>{s.tab}</a>
+    ))}
+  </nav>
+  <div class="say"><a href="mailto:prithvirajgotepatil@gmail.com">Get in touch</a></div>
+</div>

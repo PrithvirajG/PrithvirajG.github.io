@@ -1,0 +1,25 @@
+---
+import '../styles/tokens.css';
+import SectionNav from '../components/SectionNav.astro';
+interface Props { title: string; description: string; current: string; }
+const { title, description, current } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..600&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <SectionNav current={current} />
+    <slot />
+    <script>
+      import start from '../scripts/scroll';
+      start();
+    </script>
+  </body>
+</html>
