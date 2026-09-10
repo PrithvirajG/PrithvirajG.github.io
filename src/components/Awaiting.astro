@@ -1,0 +1,14 @@
+---
+interface Props { what: string; }
+const { what } = Astro.props;
+---
+<div class="awaiting">
+  <b>This section is waiting on content.</b>
+  Nothing above is real. {what}
+</div>
+
+<style>
+  .awaiting { margin-top: 26px; border: 1px solid var(--magenta); padding: 14px 16px;
+    font-family: var(--chart); font-size: 13px; line-height: 1.6; color: var(--ink); max-width: 44em; }
+  .awaiting b { color: var(--magenta); display: block; margin-bottom: 5px; }
+</style>

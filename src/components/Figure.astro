@@ -1,0 +1,15 @@
+---
+interface Props { number: number; caption: string; }
+const { number, caption } = Astro.props;
+---
+<figure>
+  <div class="plate"><slot /></div>
+  <figcaption><b>Figure {number}.</b> {caption}</figcaption>
+</figure>
+
+<style>
+  .plate { background: var(--paper-terrain); border: 1px solid var(--ink); }
+  .plate :global(svg) { display: block; width: 100%; height: auto; }
+  figcaption { font-family: var(--chart); font-size: 12px; color: var(--ink-soft); margin-top: 7px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+</style>

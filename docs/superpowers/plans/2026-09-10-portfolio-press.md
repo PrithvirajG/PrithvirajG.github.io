@@ -558,9 +558,7 @@ Append to `src/styles/tokens.css`:
 .pin { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; }
 .pin i { display: block; height: 100%; width: 0; background: var(--magenta); }
 
-.kicker { font-family: var(--chart); font-size: 13px; font-weight: 600; color: var(--magenta); }
-.hed { font-size: clamp(30px, 4.6vw, 58px); line-height: .98; letter-spacing: -.02em; font-weight: 500; margin: 8px 0 4px; }
-.deck { font-size: 20px; font-style: italic; color: var(--ink-soft); max-width: 26em; margin-bottom: 22px; }
+/* .kicker, .hed and .deck are already global from Task 1. Do not restate them. */
 
 .w { color: #C3C4B8; transition: color .18s ease; }
 .w.on { color: var(--ink); }
