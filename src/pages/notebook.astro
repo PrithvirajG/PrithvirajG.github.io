@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+
+const posts = (await getCollection('posts', p => import.meta.env.DEV || !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const entries = posts.map(p => ({
+  name: p.data.title,
+  note: p.data.summary,
+  who: p.data.draft ? 'draft' : '',
+  when: p.data.date.toISOString().slice(0, 10),
+  href: `/blog/${p.id}`,
+}));
+---
+<Section title="Notebook — Prithviraj Gotepatil" description="Occasional writing about systems that had to stay up." current="/notebook">
+  <Sheet id="notebook" desk="Notebook" name="Writing" period="" paper="paper">
+    <p class="kicker">Occasional, not scheduled</p>
+    <h1 class="hed">Notebook</h1>
+    <p class="deck">Notes on systems that had to stay up, and what it took.</p>
+    {entries.length > 0
+      ? <EntryList entries={entries} />
+      : <Awaiting what="No posts yet. Each one is a markdown file in the repository and appears here once written." />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>

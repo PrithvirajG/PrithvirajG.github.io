@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+import { workshopProjects } from '../lib/grouping';
+
+const mine = workshopProjects(await getCollection('projects'));
+const entries = mine.map(p => ({
+  name: p.data.title,
+  note: p.data.summary,
+  who: p.data.stack.slice(0, 3).join(', '),
+  when: p.data.repo ? 'source' : '',
+  href: p.data.repo,
+}));
+const missing = mine.filter(p => !p.data.repo).length;
+---
+<Section title="Projects — Prithviraj Gotepatil" description="Things built outside work hours, with their repositories." current="/projects">
+  <Sheet id="projects" desk="Projects" name="Outside work hours" period="2021 to now" paper="terrain">
+    <p class="kicker">Built because I wanted them to exist</p>
+    <h1 class="hed">Personal projects</h1>
+    <p class="deck">Side builds, each with the stack it runs on and a link to the source where there is one.</p>
+    <EntryList entries={entries} />
+    {missing > 0 && <Awaiting what={`${missing} of these have no repository link yet. Send the GitHub URLs and they become links.`} />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>

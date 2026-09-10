@@ -1,0 +1,47 @@
+---
+import '../styles/tokens.css';
+import SectionNav from '../components/SectionNav.astro';
+interface Props { title: string; date: Date; summary: string; }
+const { title, date, summary } = Astro.props;
+const stamp = date.toISOString().slice(0, 10);
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={summary} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..600&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <SectionNav current="/notebook" />
+    <article>
+      <p class="stamp"><time datetime={stamp}>{stamp}</time></p>
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+      <hr />
+      <div class="prose"><slot /></div>
+      <p class="back"><a href="/notebook">Back to the notebook</a></p>
+    </article>
+
+    <style>
+      article { max-width: 34em; margin: 0 auto; padding: 46px 22px 90px; }
+      .stamp { font-family: var(--chart); font-size: 13px; color: var(--magenta); }
+      h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.02; letter-spacing: -.02em;
+        font-weight: 500; margin: 8px 0 10px; }
+      .summary { font-size: 20px; font-style: italic; color: var(--ink-soft); }
+      hr { border: 0; border-top: 1px solid var(--ink); margin: 22px 0; }
+      .prose :global(p) { margin-bottom: 16px; }
+      .prose :global(h2) { font-size: 26px; font-weight: 500; margin: 28px 0 8px; }
+      .prose :global(pre) { background: var(--paper-terrain); border: 1px solid var(--rule);
+        padding: 12px 14px; overflow-x: auto; font-size: 14px; }
+      .prose :global(code) { font-family: ui-monospace, monospace; font-size: .9em; }
+      .prose :global(blockquote) { border-left: 2px solid var(--magenta); padding-left: 14px;
+        font-style: italic; color: var(--ink-soft); }
+      .back { font-family: var(--chart); font-size: 13px; margin-top: 40px;
+        border-top: 1px solid var(--rule); padding-top: 14px; }
+    </style>
+  </body>
+</html>

@@ -2,225 +2,55 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the single-file portfolio with a content-driven Astro site presented as an editorial broadsheet with pinned, internally scrolling sheets.
+**Goal:** Replace the single-file portfolio with a content-driven Astro site of six tabbed sections, each an editorial broadsheet of pinned, internally scrolling sheets, plus article pages for a blog.
 
-**Architecture:** All prose lives in Astro content collections, one markdown file per project. Pages render as static HTML with no JavaScript by default. A single client island runs the scroll engine, which pins each sheet, translates its content column by its own overflow, and hands over to the next sheet. Pure geometry and grouping logic live in plain TypeScript modules with unit tests; the DOM binding is a thin wrapper around them.
+**Architecture:** Every tab is a real route sharing one layout that renders a persistent masthead strip. All prose lives in Astro content collections, one markdown file per entry. Pages are static HTML with no JavaScript by default; one client island runs the scroll engine, which pins each sheet, translates its content column by its own overflow, and hands over to the next. Pure geometry and grouping live in plain TypeScript with unit tests; the DOM binding is a thin wrapper. Blog posts use a second, unpinned layout because long-form text cannot be read inside a self-scrolling pane.
 
 **Tech Stack:** Astro 5, TypeScript, Vitest, Newsreader and Archivo Narrow via Google Fonts, GitHub Actions to GitHub Pages.
 
 **Spec:** `docs/superpowers/specs/2026-09-10-portfolio-press-design.md`
 
-**Reference implementation:** `.superpowers/press-prototype.html` is a working throwaway prototype of the front page, two sheets, and the scroll engine. Read it before Task 5. It is gitignored and must not be shipped.
+**Reference implementations, both gitignored and neither shipped:**
+- `.superpowers/press-prototype.html` — the Work route: masthead strip, front sheet, two employer sheets, and the full scroll engine.
+- `.superpowers/press-prototype-courses.html` — a non-Work tab: the entry-row layout and the placeholder treatment.
+
+Read the relevant one before any task that says to.
 
 ## Global Constraints
 
-- Node 24, npm 11. Both are already installed.
-- Colour tokens, exact values: `--paper #E8E7DE`, `--paper-terrain #E0E1D4`, `--paper-water #DCE2E3`, `--ink #14150F`, `--ink-soft #54554A`, `--magenta #B01B6E`, `--blue #1B5A87`, `--rule #A9AA9C`.
-- Typefaces: Newsreader for masthead, headlines, decks, body. Archivo Narrow for running heads, captions, figure labels, index. No third family.
-- Sheet order is chronological, most recent first: Coditas, FlytBase, AlgoBulls with Yun, Integrated Active Monitoring, Workshop, Back page.
-- Motion kept: pinned sheets, inner scroll, progress hairline, running head, paper tone shift, ink reveal on the front page only.
-- Motion cut: halftone resolve on figures, rules drawing themselves. Do not implement either.
-- Pinning is disabled below 821px and under `prefers-reduced-motion`. Both fall back to normal document flow.
+- Node 24, npm 11, both installed. Task 1 is already complete on branch `press-redesign`.
+- Colour tokens, exact values: `--paper #E8E7DE`, `--paper-terrain #E0E1D4`, `--paper-water #DCE2E3`, `--ink #14150F`, `--ink-soft #54554A`, `--magenta #B01B6E`, `--blue #1B5A87`, `--rule #A9AA9C`. Strip height `--strip: 46px`.
+- Typefaces: Newsreader for masthead, headlines, decks, body. Archivo Narrow for the strip, running heads, captions, figure labels, entry metadata. No third family.
+- Six tabs in this order: Work at `/`, Projects at `/projects`, Education at `/education`, Courses at `/courses`, Contests at `/contests`, Notebook at `/notebook`. Contact is not a tab.
+- Work sheets are chronological, most recent first: Coditas, FlytBase, AlgoBulls with Yun, Integrated Active Monitoring, then the back page.
+- Motion kept: pinned sheets, inner scroll, progress hairline, running head, paper tone shift, ink reveal on the Work landing only.
+- Motion cut: halftone resolve on figures, and rules drawing themselves. Do not implement either.
+- Pinning is disabled below 821px and under `prefers-reduced-motion`; both fall back to normal flow. Article pages are never pinned.
 - Copy rules: no all-caps eyebrow labels, no metadata joined with middle dots, no arrows appended to link text, no accenting a single word inside a headline.
-- The front page must not lead with drone work. Drones are one of five desks.
-- `index.html` stays untouched and working until Task 10.
+- **Invent nothing.** No course, certificate, contest placement, institution, date, or repository URL may be fabricated. Sections without supplied content ship with structure plus a visible placeholder that says it is waiting on the owner.
+- The Work landing must not lead with drone work.
+- `index.html` stays untouched and working until the final task.
 
 ---
 
-### Task 1: Scaffold the Astro project and the deploy workflow
-
-**Files:**
-- Create: `package.json`, `astro.config.mjs`, `tsconfig.json`, `vitest.config.ts`
-- Create: `src/styles/tokens.css`
-- Create: `src/pages/index.astro`
-- Create: `.github/workflows/deploy.yml`
-- Modify: `.gitignore`
-
-**Interfaces:**
-- Consumes: nothing.
-- Produces: a buildable Astro site at repo root; the CSS custom properties named in Global Constraints, available to every later task via `src/styles/tokens.css`.
-
-- [ ] **Step 1: Initialise the project**
-
-Run from the repository root:
-
-```bash
-npm create astro@latest . -- --template minimal --no-install --no-git --typescript strict --skip-houston
-npm install
-npm install -D vitest
-```
-
-If the installer refuses because the directory is not empty, answer yes to continuing. It must not delete `index.html`.
-
-- [ ] **Step 2: Add the static-output config**
-
-`astro.config.mjs`:
-
-```js
-import { defineConfig } from 'astro/config';
-
-export default defineConfig({
-  site: 'https://prithvirajg.github.io',
-  output: 'static',
-  build: { format: 'file' },
-});
-```
-
-- [ ] **Step 3: Add the test runner config**
-
-`vitest.config.ts`:
-
-```ts
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
-  test: { environment: 'node', include: ['src/**/*.test.ts'] },
-});
-```
-
-Add to `package.json` scripts: `"test": "vitest run"`.
-
-- [ ] **Step 4: Write the design tokens**
-
-`src/styles/tokens.css`:
-
-```css
-:root {
-  --paper: #E8E7DE;
-  --paper-terrain: #E0E1D4;
-  --paper-water: #DCE2E3;
-  --ink: #14150F;
-  --ink-soft: #54554A;
-  --magenta: #B01B6E;
-  --blue: #1B5A87;
-  --rule: #A9AA9C;
-  --serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --chart: "Archivo Narrow", "Helvetica Neue", Arial, sans-serif;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.62;
-  font-variant-numeric: oldstyle-nums;
-  -webkit-font-smoothing: antialiased;
-  transition: background-color .9s ease;
-}
-
-a { color: inherit; }
-:focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; }
-```
-
-- [ ] **Step 5: Add a placeholder page that proves the build**
-
-`src/pages/index.astro`:
-
-```astro
----
-import '../styles/tokens.css';
----
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Prithviraj Gotepatil</title>
-  </head>
-  <body>
-    <p>Build works.</p>
-  </body>
-</html>
-```
-
-- [ ] **Step 6: Add the deploy workflow**
-
-`.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: true
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-```
-
-This workflow has no effect on the live site until the repository's Pages source is switched to GitHub Actions, which happens in Task 10.
-
-- [ ] **Step 7: Ignore build output**
-
-Append to `.gitignore`:
-
-```
-node_modules/
-dist/
-.astro/
-```
-
-- [ ] **Step 8: Verify the build and the test runner**
-
-```bash
-npm run build
-npm test
-```
-
-Expected: the build writes `dist/index.html`; `npm test` reports no test files, which is a pass at this stage.
-
-- [ ] **Step 9: Commit**
-
-```bash
-git add -A
-git commit -m "Scaffold Astro project, design tokens, and Pages workflow"
-```
-
----
-
-### Task 2: Content collections and schema
+### Task 2: Content collections and schemas
 
 **Files:**
 - Create: `src/content.config.ts`
-- Create: `src/content/employers/coditas.md`, `flytbase.md`, `algobulls-yun.md`, `iam.md`
-- Create: `src/content/projects/*.md` (one per project, listed in Step 4)
-- Test: `src/lib/grouping.test.ts` (written in Task 3)
+- Create: `src/content/employers/{coditas,flytbase,algobulls-yun,iam}.md`
+- Create: `src/content/projects/*.md`
+- Create: `src/content/education/.gitkeep`, `src/content/courses/.gitkeep`, `src/content/contests/.gitkeep`, `src/content/posts/.gitkeep`
+- Modify: `vitest.config.ts`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: two collections. `employers` entries have `{ desk: string, name: string, role: string, period: string, start: string, blurb: string, paper: 'paper' | 'terrain' | 'water' }`. `projects` entries have `{ title: string, employer: string, status: 'production' | 'internal' | 'personal', disciplines: string[], stack: string[], summary: string, highlights: string[], metrics?: { value: string, label: string, accent?: boolean }[], openQuestions?: string[], order: number }`. `employer` matches an `employers` entry id, or the literal `workshop` for personal projects.
+- Produces: six collections. `employers`: `{ desk, name, role, period, start, blurb, paper }`. `projects`: `{ title, employer, status, disciplines, stack, summary, highlights, metrics?, openQuestions?, repo?, demo?, order }`. `education`: `{ qualification, institution, period, result?, note?, order }`. `courses`: `{ name, issuer, year, note?, order }`. `contests`: `{ name, host, year, placement?, built?, order }`. `posts`: `{ title, date, summary, tags?, draft }`. Every later task reads these shapes.
 
-- [ ] **Step 1: Define the schema**
+- [ ] **Step 1: Fix the empty-suite exit code**
+
+Carried over from Task 1: `npm test` exits 1 when no test file matches, which fails CI. In `vitest.config.ts`, add `passWithNoTests: true` inside the `test` object.
+
+- [ ] **Step 2: Write the schema**
 
 `src/content.config.ts`:
 
@@ -228,8 +58,10 @@ git commit -m "Scaffold Astro project, design tokens, and Pages workflow"
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+const md = (dir: string) => glob({ pattern: '**/*.md', base: `./src/content/${dir}` });
+
 const employers = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/employers' }),
+  loader: md('employers'),
   schema: z.object({
     desk: z.string(),
     name: z.string(),
@@ -242,7 +74,7 @@ const employers = defineCollection({
 });
 
 const projects = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  loader: md('projects'),
   schema: z.object({
     title: z.string(),
     employer: z.string(),
@@ -257,14 +89,62 @@ const projects = defineCollection({
       accent: z.boolean().optional(),
     })).optional(),
     openQuestions: z.array(z.string()).optional(),
+    repo: z.string().url().optional(),
+    demo: z.string().url().optional(),
     order: z.number(),
   }),
 });
 
-export const collections = { employers, projects };
+const education = defineCollection({
+  loader: md('education'),
+  schema: z.object({
+    qualification: z.string(),
+    institution: z.string(),
+    period: z.string(),
+    result: z.string().optional(),
+    note: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
+const courses = defineCollection({
+  loader: md('courses'),
+  schema: z.object({
+    name: z.string(),
+    issuer: z.string(),
+    year: z.string(),
+    note: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
+const contests = defineCollection({
+  loader: md('contests'),
+  schema: z.object({
+    name: z.string(),
+    host: z.string(),
+    year: z.string(),
+    placement: z.string().optional(),
+    built: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
+const posts = defineCollection({
+  loader: md('posts'),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    summary: z.string(),
+    tags: z.array(z.string()).optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { employers, projects, education, courses, contests, posts };
 ```
 
-- [ ] **Step 2: Write the four employer files**
+- [ ] **Step 3: Write the four employer files**
 
 `src/content/employers/coditas.md`:
 
@@ -300,7 +180,7 @@ paper: terrain
 ---
 desk: Markets
 name: AlgoBulls and Yun Solutions
-role: Python Developer, then Data Analyst
+role: Python Developer at AlgoBulls, Data Analyst at Yun Solutions
 period: 2022 to 2023
 start: "2022-10"
 blurb: Automated trading strategies and the broker plumbing beneath them, plus scraping and language pipelines feeding market sentiment analysis.
@@ -322,7 +202,7 @@ paper: paper
 ---
 ```
 
-- [ ] **Step 3: Write one project file to establish the shape**
+- [ ] **Step 4: Write one project file to establish the shape**
 
 `src/content/projects/abstraction-layer.md`:
 
@@ -332,7 +212,7 @@ title: One service between the drone and the cloud
 employer: flytbase
 status: production
 disciplines: [robotics, infrastructure]
-stack: [Python, asyncio, MQTT, Redis, Flask, RabbitMQ]
+stack: [Python, asyncio, MQTT, Redis, Flask, RabbitMQ, Prometheus, DJI Cloud SDK]
 summary: Stateless, horizontally scalable middleware between DJI hardware and the cloud, carrying live telemetry up and control commands back down.
 highlights:
   - Runs on asyncio so a slow MQTT topic never blocks a fast one.
@@ -341,7 +221,6 @@ highlights:
   - Outbound velocity commands are throttled during manual control so the hardware is never overrun.
   - Retries, circuit breakers, and metrics were in the first version, not a later patch.
 metrics:
-  - { value: "70 to 95%", label: "Geofence sync success after redesign", accent: true }
   - { value: "3", label: "Protocols spoken" }
 openQuestions:
   - Peak MQTT messages per second.
@@ -362,48 +241,52 @@ else. Retries, circuit breakers, and metrics were part of the first version, not
 later patch.
 ```
 
-- [ ] **Step 4: Migrate the remaining projects**
+- [ ] **Step 5: Migrate the remaining projects**
 
-Source of truth is the current `index.html`, which contains the full prose for every project. Read it and create one file per project below, following the shape from Step 3. Reuse the existing wording; do not invent facts. Every "Add: ..." note in the current file becomes an `openQuestions` entry.
+Source of truth is `index.html` at the repository root, which holds the full prose for every project. Read it and create one file per project below, following Step 4's shape. Reuse the existing wording. Invent nothing. Every "Add: ..." note in that file becomes an `openQuestions` entry. Omit `repo` and `demo` entirely rather than guessing a URL.
 
-Coditas (`employer: coditas`): `br-generation`, `cec-upgrade-automation`, `mcp-change-history`, `mcp-business-api`, `bulk-br-concurrency`.
+Coditas: `br-generation`, `cec-upgrade-automation`, `mcp-change-history`, `mcp-business-api`, `bulk-br-concurrency`.
 
-FlytBase (`employer: flytbase`): `abstraction-layer` (done), `android-app`, `airspace-monitoring`, `tactical-deconfliction`, `on-premise-deployment`, `object-tracking`, `floid`.
+FlytBase: `abstraction-layer` (done), `android-app`, `airspace-monitoring`, `tactical-deconfliction`, `on-premise-deployment`, `object-tracking`, `floid`.
 
 AlgoBulls and Yun (`employer: algobulls-yun`): `trading-strategies`, `youtube-market-pipeline`, `play-store-sentiment`.
 
 Integrated Active Monitoring (`employer: iam`): `fisheye-heatmap`, `warehouse-inventory`.
 
-Workshop (`employer: workshop`, `status: personal`): `multimodal-chatbot`, `interviewee-analysis`, `smart-inhaler`, `quiz-hub`, `document-scanner`.
+Personal (`employer: workshop`, `status: personal`): `multimodal-chatbot`, `interviewee-analysis`, `smart-inhaler`, `quiz-hub`, `document-scanner`.
 
-Set `order` to control the sequence within a sheet, starting at 1 for the project that should lead. Lead each employer with its strongest project.
+Set `order` from 1 within each employer, leading with the strongest project.
 
-- [ ] **Step 5: Verify the schema accepts every file**
+- [ ] **Step 6: Keep the empty collections loadable**
+
+Create an empty `.gitkeep` in each of `src/content/education`, `src/content/courses`, `src/content/contests`, and `src/content/posts`. A collection whose directory does not exist fails the build; a collection with no entries is fine and is what the later routes expect.
+
+- [ ] **Step 7: Verify**
 
 ```bash
-npm run build
+npm run build && npm test
 ```
 
-Expected: build succeeds. A schema violation fails the build and names the offending file and field. Fix and rerun until clean.
+Expected: build succeeds, and a schema violation names its file and field if one exists. `npm test` now exits 0.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add -A
-git commit -m "Add employer and project content collections"
+git commit -m "Add content collections for work, study, contests, and posts"
 ```
 
 ---
 
-### Task 3: Grouping logic
+### Task 3: Grouping and section registry
 
 **Files:**
-- Create: `src/lib/grouping.ts`
+- Create: `src/lib/grouping.ts`, `src/lib/sections.ts`
 - Test: `src/lib/grouping.test.ts`
 
 **Interfaces:**
-- Consumes: the collection entry shapes from Task 2.
-- Produces: `groupByEmployer(projects, employers): Sheet[]` where `Sheet` is `{ id: string, desk: string, name: string, role: string, period: string, blurb: string, paper: 'paper' | 'terrain' | 'water', projects: ProjectLike[] }`. Sheets are sorted by `start` descending. Projects within a sheet are sorted by `order` ascending. Task 7 renders this array directly.
+- Consumes: the collection shapes from Task 2.
+- Produces: `groupByEmployer(projects, employers): Sheet[]`, sheets sorted by `start` descending, projects within each sorted by `order` ascending, employers with no projects retained, and projects whose employer matches no entry excluded. `workshopProjects(projects)` returns personal projects sorted by `order`. `SECTIONS` is the single source of truth for the tab strip and the Work index.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -411,7 +294,7 @@ git commit -m "Add employer and project content collections"
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { groupByEmployer } from './grouping';
+import { groupByEmployer, workshopProjects } from './grouping';
 
 const employers = [
   { id: 'iam', data: { desk: 'Vision', name: 'IAM', role: 'Intern', period: '2021 to 2022', start: '2021-10', blurb: 'b', paper: 'paper' } },
@@ -423,29 +306,35 @@ const projects = [
   { id: 'b', data: { title: 'B', employer: 'coditas', order: 2 } },
   { id: 'a', data: { title: 'A', employer: 'coditas', order: 1 } },
   { id: 'c', data: { title: 'C', employer: 'flytbase', order: 1 } },
+  { id: 'q', data: { title: 'Q', employer: 'workshop', order: 2 } },
   { id: 'p', data: { title: 'P', employer: 'workshop', order: 1 } },
 ];
 
 describe('groupByEmployer', () => {
   it('orders sheets most recent first', () => {
-    const sheets = groupByEmployer(projects as any, employers as any);
-    expect(sheets.map(s => s.id)).toEqual(['coditas', 'flytbase', 'iam']);
+    expect(groupByEmployer(projects as any, employers as any).map(s => s.id))
+      .toEqual(['coditas', 'flytbase', 'iam']);
   });
 
   it('orders projects within a sheet by order ascending', () => {
-    const sheets = groupByEmployer(projects as any, employers as any);
-    expect(sheets[0].projects.map(p => p.data.title)).toEqual(['A', 'B']);
+    expect(groupByEmployer(projects as any, employers as any)[0].projects.map(p => p.data.title))
+      .toEqual(['A', 'B']);
   });
 
   it('excludes projects with no matching employer', () => {
-    const sheets = groupByEmployer(projects as any, employers as any);
-    const ids = sheets.flatMap(s => s.projects.map(p => p.id));
+    const ids = groupByEmployer(projects as any, employers as any).flatMap(s => s.projects.map(p => p.id));
     expect(ids).not.toContain('p');
   });
 
   it('keeps an employer with no projects', () => {
-    const sheets = groupByEmployer(projects as any, employers as any);
-    expect(sheets.find(s => s.id === 'iam')?.projects).toEqual([]);
+    expect(groupByEmployer(projects as any, employers as any).find(s => s.id === 'iam')?.projects)
+      .toEqual([]);
+  });
+});
+
+describe('workshopProjects', () => {
+  it('returns only personal projects, in order', () => {
+    expect(workshopProjects(projects as any).map(p => p.id)).toEqual(['p', 'q']);
   });
 });
 ```
@@ -472,7 +361,7 @@ export interface ProjectLike {
   data: { title: string; employer: string; order: number };
 }
 
-export interface Sheet {
+export interface Sheet<P extends ProjectLike = ProjectLike> {
   id: string;
   desk: string;
   name: string;
@@ -480,10 +369,10 @@ export interface Sheet {
   period: string;
   blurb: string;
   paper: Paper;
-  projects: ProjectLike[];
+  projects: P[];
 }
 
-export function groupByEmployer<P extends ProjectLike>(projects: P[], employers: EmployerLike[]): (Sheet & { projects: P[] })[] {
+export function groupByEmployer<P extends ProjectLike>(projects: P[], employers: EmployerLike[]): Sheet<P>[] {
   return [...employers]
     .sort((a, b) => (a.data.start < b.data.start ? 1 : a.data.start > b.data.start ? -1 : 0))
     .map(e => ({
@@ -494,9 +383,7 @@ export function groupByEmployer<P extends ProjectLike>(projects: P[], employers:
       period: e.data.period,
       blurb: e.data.blurb,
       paper: e.data.paper,
-      projects: projects
-        .filter(p => p.data.employer === e.id)
-        .sort((a, b) => a.data.order - b.data.order),
+      projects: projects.filter(p => p.data.employer === e.id).sort((a, b) => a.data.order - b.data.order),
     }));
 }
 
@@ -505,21 +392,38 @@ export function workshopProjects<P extends ProjectLike>(projects: P[]): P[] {
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [ ] **Step 4: Write the section registry**
+
+`src/lib/sections.ts`:
+
+```ts
+export interface Section { href: string; tab: string; description: string }
+
+export const SECTIONS: Section[] = [
+  { href: '/', tab: 'Work', description: 'Four years of production systems, most recent first.' },
+  { href: '/projects', tab: 'Projects', description: 'Things built outside work hours, with their repositories.' },
+  { href: '/education', tab: 'Education', description: 'Degree and the institution behind it.' },
+  { href: '/courses', tab: 'Courses', description: 'Structured study taken alongside the work.' },
+  { href: '/contests', tab: 'Contests', description: 'Hackathons and competitions, and what came out of them.' },
+  { href: '/notebook', tab: 'Notebook', description: 'Occasional writing about systems that had to stay up.' },
+];
+```
+
+- [ ] **Step 5: Run the tests to verify they pass**
 
 Run: `npx vitest run src/lib/grouping.test.ts`
-Expected: PASS, four tests.
+Expected: PASS, five tests.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/lib/grouping.ts src/lib/grouping.test.ts
-git commit -m "Add employer grouping, most recent first"
+git add src/lib
+git commit -m "Add employer grouping and the section registry"
 ```
 
 ---
 
-### Task 4: The scroll engine geometry
+### Task 4: Scroll geometry
 
 **Files:**
 - Create: `src/scripts/pin.ts`
@@ -527,7 +431,7 @@ git commit -m "Add employer grouping, most recent first"
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `overflowOf(contentHeight: number, viewportHeight: number): number` and `pinAmount(spacerTop: number, viewportHeight: number, overflow: number): number`. Task 5 binds these to the DOM. Both are pure and take no DOM references.
+- Produces: `overflowOf(contentHeight, viewportHeight): number` and `pinAmount(spacerTop, viewportHeight, overflow): number`. Both pure, both taking no DOM references. Task 5 binds them.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -543,6 +447,9 @@ describe('overflowOf', () => {
   });
   it('is the excess when the content is taller', () => {
     expect(overflowOf(1400, 800)).toBe(600);
+  });
+  it('accounts for a viewport shortened by the masthead strip', () => {
+    expect(overflowOf(1000, 800 - 46)).toBe(246);
   });
 });
 
@@ -573,11 +480,11 @@ Expected: FAIL, cannot resolve `./pin`.
 
 ```ts
 /**
- * A sheet is pinned to the top of the viewport. The spacer that follows it in
- * the document buys scroll distance: while the reader travels through the
- * spacer the sheet holds position and its content column slides up by exactly
- * its own overflow. When the column bottoms out the spacer ends and the next
- * sheet slides over the top.
+ * A sheet is pinned below the masthead strip. The spacer that follows it in the
+ * document buys scroll distance: while the reader travels through the spacer the
+ * sheet holds position and its content column slides up by exactly its own
+ * overflow. When the column bottoms out the spacer ends and the next sheet slides
+ * over the top.
  */
 
 export function overflowOf(contentHeight: number, viewportHeight: number): number {
@@ -586,15 +493,14 @@ export function overflowOf(contentHeight: number, viewportHeight: number): numbe
 
 export function pinAmount(spacerTop: number, viewportHeight: number, overflow: number): number {
   if (overflow <= 0) return 0;
-  const travelled = viewportHeight - spacerTop;
-  return Math.max(0, Math.min(overflow, travelled));
+  return Math.max(0, Math.min(overflow, viewportHeight - spacerTop));
 }
 ```
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `npx vitest run src/scripts/pin.test.ts`
-Expected: PASS, six tests.
+Expected: PASS, seven tests.
 
 - [ ] **Step 5: Commit**
 
@@ -605,43 +511,63 @@ git commit -m "Add pinned-sheet geometry with tests"
 
 ---
 
-### Task 5: The scroll engine DOM binding
+### Task 5: Global styles and the scroll engine
 
 **Files:**
+- Modify: `src/styles/tokens.css`
 - Create: `src/scripts/scroll.ts`
-- Modify: `src/styles/tokens.css` (append the sheet layout block)
 
 **Interfaces:**
 - Consumes: `overflowOf` and `pinAmount` from Task 4.
-- Produces: a default-exported `start(): void` that Task 7 calls from an inline module script. It expects the DOM to contain `.sheet` elements each followed by a `.spacer` sibling, each sheet containing one `.col` and one `.pin i`, and a `#lede` element on the front sheet.
+- Produces: a default-exported `start(): void`. It expects `.sheet` elements each followed by a `.spacer` sibling, each containing one `.col` and one `.pin i`, and optionally one `#lede`. Task 6's layout calls it.
 
-Read `.superpowers/press-prototype.html` before writing this. It is the working reference for every selector and behaviour below.
+Read `.superpowers/press-prototype.html` first. It is the working reference for every selector below.
 
-- [ ] **Step 1: Append the sheet layout CSS**
+- [ ] **Step 1: Add the strip height token**
+
+In `src/styles/tokens.css`, add `--strip: 46px;` to the `:root` block, and `padding-top: var(--strip);` to the `body` rule.
+
+- [ ] **Step 2: Append the layout CSS**
 
 Append to `src/styles/tokens.css`:
 
 ```css
-.sheet {
-  position: sticky; top: 0; height: 100vh; overflow: hidden;
+.strip { position: fixed; top: 0; left: 0; right: 0; height: var(--strip); z-index: 80;
+  display: flex; align-items: stretch; background: var(--paper); border-bottom: 1px solid var(--ink); }
+.strip .who { display: flex; align-items: center; padding: 0 16px; font-size: 15px;
+  letter-spacing: -.01em; border-right: 1px solid var(--rule); white-space: nowrap; }
+.strip nav { display: flex; align-items: stretch; overflow-x: auto; }
+.strip nav a { display: flex; align-items: center; padding: 0 15px; font-family: var(--chart);
+  font-size: 13px; color: var(--ink-soft); text-decoration: none; border-right: 1px solid var(--rule);
+  border-bottom: 2px solid transparent; white-space: nowrap; }
+.strip nav a:hover { color: var(--ink); background: rgba(20, 21, 15, .04); }
+.strip nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--magenta); font-weight: 600; }
+.strip .say { margin-left: auto; display: flex; align-items: center; padding: 0 16px;
+  font-family: var(--chart); font-size: 13px; border-left: 1px solid var(--rule); white-space: nowrap; }
+
+.sheet { position: sticky; top: var(--strip); height: calc(100vh - var(--strip)); overflow: hidden;
   display: grid; grid-template-columns: 112px minmax(0, 1fr);
-  border-top: 1px solid var(--ink);
-  box-shadow: 0 -20px 44px -30px rgba(20, 21, 15, .55);
-}
+  border-top: 1px solid var(--ink); box-shadow: 0 -20px 44px -30px rgba(20, 21, 15, .55); }
 .spacer { height: 0; }
 .col { padding: 26px 30px 40px; max-width: 1080px; will-change: transform; }
 .margin { border-right: 1px solid var(--rule); padding: 22px 12px 22px 22px; }
-.runhead { position: sticky; top: 22px; font-family: var(--chart); font-size: 12px; line-height: 1.35; color: var(--ink-soft); }
+.runhead { position: sticky; top: 22px; font-family: var(--chart); font-size: 12px;
+  line-height: 1.35; color: var(--ink-soft); }
 .runhead b { display: block; color: var(--ink); font-weight: 600; font-size: 13px; }
 .runhead span { display: block; margin-top: 5px; font-variant-numeric: tabular-nums; }
 .pin { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; }
 .pin i { display: block; height: 100%; width: 0; background: var(--magenta); }
+
+/* .kicker, .hed and .deck are already global from Task 1. Do not restate them. */
+
 .w { color: #C3C4B8; transition: color .18s ease; }
 .w.on { color: var(--ink); }
 .w.key.on { color: var(--magenta); }
 
 @media (max-width: 820px) {
-  .sheet { grid-template-columns: 1fr; position: relative; height: auto; min-height: 100vh; overflow: visible; box-shadow: none; }
+  .strip .who, .strip .say { display: none; }
+  .sheet { grid-template-columns: 1fr; position: relative; height: auto;
+    min-height: calc(100vh - var(--strip)); overflow: visible; box-shadow: none; }
   .spacer { height: 0 !important; }
   .col { transform: none !important; will-change: auto; padding: 20px 20px 34px; }
   .margin { border-right: 0; border-bottom: 1px solid var(--rule); padding: 14px 20px; }
@@ -652,7 +578,8 @@ Append to `src/styles/tokens.css`:
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
-  .sheet { position: relative; height: auto; min-height: 100vh; overflow: visible; box-shadow: none; }
+  .sheet { position: relative; height: auto; min-height: calc(100vh - var(--strip));
+    overflow: visible; box-shadow: none; }
   .spacer { height: 0 !important; }
   .col { transform: none !important; }
   .pin { display: none; }
@@ -661,7 +588,7 @@ Append to `src/styles/tokens.css`:
 }
 ```
 
-- [ ] **Step 2: Write the engine**
+- [ ] **Step 3: Write the engine**
 
 `src/scripts/scroll.ts`:
 
@@ -669,7 +596,6 @@ Append to `src/styles/tokens.css`:
 import { overflowOf, pinAmount } from './pin';
 
 interface Bound {
-  sheet: HTMLElement;
   col: HTMLElement;
   spacer: HTMLElement | null;
   bar: HTMLElement | null;
@@ -677,10 +603,12 @@ interface Bound {
 }
 
 export default function start(): void {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const sheets = Array.from(document.querySelectorAll<HTMLElement>('.sheet'));
+  if (!sheets.length) return;
+
+  const strip = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--strip'), 10) || 0;
   const lede = document.getElementById('lede');
   const words: HTMLElement[] = [];
   let pinned = matchMedia('(min-width: 821px)').matches;
@@ -690,9 +618,9 @@ export default function start(): void {
     let html = '';
     lede.childNodes.forEach(node => {
       const isKey = node.nodeType === 1 && (node as Element).classList.contains('key');
-      html += (node.textContent ?? '').split(/(\s+)/).map(t =>
-        t.trim() ? `<span class="w${isKey ? ' key' : ''}">${t}</span>` : t
-      ).join('');
+      html += (node.textContent ?? '').split(/(\s+)/)
+        .map(t => (t.trim() ? `<span class="w${isKey ? ' key' : ''}">${t}</span>` : t))
+        .join('');
     });
     lede.innerHTML = html;
     words.push(...Array.from(lede.querySelectorAll<HTMLElement>('.w')));
@@ -700,14 +628,15 @@ export default function start(): void {
 
   function layout(): void {
     pinned = matchMedia('(min-width: 821px)').matches;
+    const view = innerHeight - strip;
     bound = sheets.map(sheet => {
       const col = sheet.querySelector<HTMLElement>('.col')!;
       const next = sheet.nextElementSibling as HTMLElement | null;
       const spacer = next && next.classList.contains('spacer') ? next : null;
-      const overflow = pinned ? overflowOf(col.scrollHeight, innerHeight) : 0;
+      const overflow = pinned ? overflowOf(col.scrollHeight, view) : 0;
       if (spacer) spacer.style.height = `${overflow}px`;
       if (!pinned) col.style.transform = '';
-      return { sheet, col, spacer, bar: sheet.querySelector<HTMLElement>('.pin i'), overflow };
+      return { col, spacer, bar: sheet.querySelector<HTMLElement>('.pin i'), overflow };
     });
   }
 
@@ -748,28 +677,175 @@ export default function start(): void {
 }
 ```
 
-- [ ] **Step 3: Run the existing tests to confirm nothing regressed**
+- [ ] **Step 4: Verify nothing regressed**
 
 Run: `npm test`
-Expected: PASS, ten tests from Tasks 3 and 4.
+Expected: PASS, twelve tests.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add src/scripts/scroll.ts src/styles/tokens.css
-git commit -m "Add pinned-sheet scroll engine and layout"
+git commit -m "Add global layout styles and the pinned-sheet scroll engine"
 ```
 
 ---
 
-### Task 6: Sheet components
+### Task 6: Layouts and the masthead strip
 
 **Files:**
-- Create: `src/components/Sheet.astro`, `src/components/Figure.astro`, `src/components/Stats.astro`, `src/components/Story.astro`
+- Create: `src/components/SectionNav.astro`, `src/components/Masthead.astro`
+- Create: `src/layouts/Section.astro`, `src/layouts/Article.astro`
 
 **Interfaces:**
-- Consumes: the `Sheet` type from Task 3.
-- Produces: `<Sheet desk name period paper>` renders the running head, the content column, the progress hairline, and the trailing spacer. `<Story project>` renders one project. `<Stats metrics>` renders a metric row. `<Figure caption>` wraps slotted SVG. Task 7 composes all four.
+- Consumes: `SECTIONS` from Task 3, `start` from Task 5, `src/styles/tokens.css`.
+- Produces: `<Section title description current>` wraps a page's sheets and renders head, strip, and the scroll island. `<Article title date>` wraps one blog post in normal flow. `current` is the `href` of the active section, matched against `SECTIONS`.
+
+- [ ] **Step 1: Write `SectionNav.astro`**
+
+The active tab carries `aria-current="page"`, which is also what the stylesheet targets, so the marker and the accessible state cannot drift apart.
+
+```astro
+---
+import { SECTIONS } from '../lib/sections';
+interface Props { current: string; }
+const { current } = Astro.props;
+---
+<div class="strip">
+  <div class="who"><a href="/" style="text-decoration:none">Prithviraj Gotepatil</a></div>
+  <nav aria-label="Sections">
+    {SECTIONS.map(s => (
+      <a href={s.href} aria-current={s.href === current ? 'page' : undefined}>{s.tab}</a>
+    ))}
+  </nav>
+  <div class="say"><a href="mailto:prithvirajgotepatil@gmail.com">Get in touch</a></div>
+</div>
+```
+
+- [ ] **Step 2: Write `Masthead.astro`**
+
+```astro
+---
+interface Props { first: string; last: string; }
+const { first, last } = Astro.props;
+---
+<h1 class="masthead">{first}<span>{last}</span></h1>
+
+<style>
+  .masthead { font-size: clamp(44px, 10.5vw, 140px); line-height: .82; letter-spacing: -.03em;
+    font-weight: 500; font-optical-sizing: auto; }
+  .masthead span { display: block; font-style: italic; font-weight: 300; letter-spacing: -.02em; }
+</style>
+```
+
+- [ ] **Step 3: Write `Section.astro`**
+
+```astro
+---
+import '../styles/tokens.css';
+import SectionNav from '../components/SectionNav.astro';
+interface Props { title: string; description: string; current: string; }
+const { title, description, current } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..600&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <SectionNav current={current} />
+    <slot />
+    <script>
+      import start from '../scripts/scroll';
+      start();
+    </script>
+  </body>
+</html>
+```
+
+- [ ] **Step 4: Write `Article.astro`**
+
+No sheets, no spacers, no scroll island. A measure under eighty characters.
+
+```astro
+---
+import '../styles/tokens.css';
+import SectionNav from '../components/SectionNav.astro';
+interface Props { title: string; date: Date; summary: string; }
+const { title, date, summary } = Astro.props;
+const stamp = date.toISOString().slice(0, 10);
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={summary} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..600&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <SectionNav current="/notebook" />
+    <article>
+      <p class="stamp"><time datetime={stamp}>{stamp}</time></p>
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+      <hr />
+      <div class="prose"><slot /></div>
+      <p class="back"><a href="/notebook">Back to the notebook</a></p>
+    </article>
+
+    <style>
+      article { max-width: 34em; margin: 0 auto; padding: 46px 22px 90px; }
+      .stamp { font-family: var(--chart); font-size: 13px; color: var(--magenta); }
+      h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.02; letter-spacing: -.02em;
+        font-weight: 500; margin: 8px 0 10px; }
+      .summary { font-size: 20px; font-style: italic; color: var(--ink-soft); }
+      hr { border: 0; border-top: 1px solid var(--ink); margin: 22px 0; }
+      .prose :global(p) { margin-bottom: 16px; }
+      .prose :global(h2) { font-size: 26px; font-weight: 500; margin: 28px 0 8px; }
+      .prose :global(pre) { background: var(--paper-terrain); border: 1px solid var(--rule);
+        padding: 12px 14px; overflow-x: auto; font-size: 14px; }
+      .prose :global(code) { font-family: ui-monospace, monospace; font-size: .9em; }
+      .prose :global(blockquote) { border-left: 2px solid var(--magenta); padding-left: 14px;
+        font-style: italic; color: var(--ink-soft); }
+      .back { font-family: var(--chart); font-size: 13px; margin-top: 40px;
+        border-top: 1px solid var(--rule); padding-top: 14px; }
+    </style>
+  </body>
+</html>
+```
+
+- [ ] **Step 5: Verify the build**
+
+Run: `npm run build`
+Expected: succeeds. Layouts are unused so far, which is fine.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/layouts src/components
+git commit -m "Add section and article layouts with the masthead strip"
+```
+
+---
+
+### Task 7: Sheet and entry components
+
+**Files:**
+- Create: `src/components/Sheet.astro`, `src/components/Story.astro`, `src/components/Figure.astro`, `src/components/Stats.astro`, `src/components/EntryList.astro`, `src/components/Awaiting.astro`
+
+**Interfaces:**
+- Consumes: nothing beyond the tokens.
+- Produces: `<Sheet id desk name period paper>` emits the sheet plus its trailing spacer. `<Story title summary highlights stack metrics? repo? demo?>` renders one project, with an optional `figure` slot. `<Stats metrics>` renders a metric row. `<Figure number caption>` wraps slotted SVG, with no halftone layer. `<EntryList entries>` renders rows of `{ name, note?, who, when, pending? }`. `<Awaiting what>` renders the placeholder notice.
+
+Read `.superpowers/press-prototype-courses.html` for the entry row and placeholder treatment.
 
 - [ ] **Step 1: Write `Sheet.astro`**
 
@@ -779,19 +855,11 @@ interface Props { id: string; desk: string; name: string; period: string; paper:
 const { id, desk, name, period, paper } = Astro.props;
 ---
 <section class="sheet" id={id} data-paper={paper} style={`background: var(--paper${paper === 'paper' ? '' : '-' + paper})`}>
-  <div class="margin">
-    <div class="runhead"><b>{desk}</b><span>{name}, {period}</span></div>
-  </div>
+  <div class="margin"><div class="runhead"><b>{desk}</b><span>{name}</span><span>{period}</span></div></div>
   <div class="col"><slot /></div>
   <div class="pin"><i></i></div>
 </section>
 <div class="spacer"></div>
-
-<style>
-  .kicker { font-family: var(--chart); font-size: 13px; font-weight: 600; color: var(--magenta); }
-  .hed { font-size: clamp(30px, 4.6vw, 58px); line-height: .98; letter-spacing: -.02em; font-weight: 500; margin: 8px 0 4px; }
-  .deck { font-size: 20px; font-style: italic; color: var(--ink-soft); max-width: 26em; margin-bottom: 20px; }
-</style>
 ```
 
 - [ ] **Step 2: Write `Stats.astro`**
@@ -813,7 +881,8 @@ const { metrics } = Astro.props;
 )}
 
 <style>
-  .stats { display: flex; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); margin-top: 20px; }
+  .stats { display: flex; flex-wrap: wrap; border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink); margin-top: 20px; }
   .stats > div { padding: 11px 20px 12px; border-right: 1px solid var(--rule); }
   .stats > div:first-child { padding-left: 0; }
   .stats > div:last-child { border-right: 0; }
@@ -824,8 +893,6 @@ const { metrics } = Astro.props;
 ```
 
 - [ ] **Step 3: Write `Figure.astro`**
-
-No halftone layer. The spec cuts it.
 
 ```astro
 ---
@@ -847,7 +914,7 @@ const { number, caption } = Astro.props;
 
 - [ ] **Step 4: Write `Story.astro`**
 
-A story is two columns when it has a figure and one column when it does not.
+Two columns when a figure is slotted, one when not. Repository and demo links appear only when supplied.
 
 ```astro
 ---
@@ -858,8 +925,10 @@ interface Props {
   highlights: string[];
   stack: string[];
   metrics?: { value: string; label: string; accent?: boolean }[];
+  repo?: string;
+  demo?: string;
 }
-const { title, summary, highlights, stack, metrics = [] } = Astro.props;
+const { title, summary, highlights, stack, metrics = [], repo, demo } = Astro.props;
 const hasFigure = Astro.slots.has('figure');
 ---
 <article class="story">
@@ -871,6 +940,8 @@ const hasFigure = Astro.slots.has('figure');
       <dl class="tail">
         <dt>Built with</dt>
         <dd>{stack.join(', ')}</dd>
+        {repo && <><dt>Source</dt><dd><a href={repo}>{repo.replace(/^https?:\/\//, '')}</a></dd></>}
+        {demo && <><dt>Live</dt><dd><a href={demo}>{demo.replace(/^https?:\/\//, '')}</a></dd></>}
       </dl>
     </div>
     {hasFigure && <div><slot name="figure" /></div>}
@@ -886,355 +957,506 @@ const hasFigure = Astro.slots.has('figure');
   .highlights { max-width: 38em; margin: 0 0 12px 1.1em; }
   .highlights li { margin-bottom: 5px; }
   .tail { font-family: var(--chart); font-size: 13px; color: var(--ink-soft); }
-  .tail dt { color: var(--ink); font-weight: 600; }
+  .tail dt { color: var(--ink); font-weight: 600; margin-top: 8px; }
+  .tail a { text-decoration-color: var(--magenta); text-underline-offset: 4px; }
   @media (max-width: 820px) { .cols.two { grid-template-columns: 1fr; gap: 22px; } }
 </style>
 ```
 
-- [ ] **Step 4b: Port the two existing diagrams**
+- [ ] **Step 5: Write `EntryList.astro`**
 
-`.superpowers/press-prototype.html` contains two finished SVG diagrams in chart ink.
-Copy each into its own component, dropping the `.dither` div, which the spec cuts.
+One row shape shared by Projects, Education, Courses, Contests, and Notebook.
 
-Create `src/components/figures/AbstractionLayer.astro` from the SVG whose labels read
-"Dock and aircraft", "Abstraction layer", and "Cloud and web".
+```astro
+---
+interface Entry { name: string; note?: string; who?: string; when?: string; href?: string; pending?: boolean }
+interface Props { entries: Entry[]; }
+const { entries } = Astro.props;
+---
+<div class="entries">
+  {entries.map(e => (
+    <div class:list={['entry', e.pending && 'pending']}>
+      <div>
+        <div class="name">{e.href ? <a href={e.href}>{e.name}</a> : e.name}</div>
+        {e.note && <div class="note">{e.note}</div>}
+      </div>
+      <div class="who2">{e.who}</div>
+      <div class="yr">{e.when}</div>
+    </div>
+  ))}
+</div>
 
-Create `src/components/figures/ChangeHistory.astro` from the SVG whose labels read
-"One sentence", "Audit tables", "Default columns", "View table", "Section map", and
-"Script".
+<style>
+  .entries { border-top: 1px solid var(--ink); }
+  .entry { border-bottom: 1px solid var(--rule); padding: 14px 0;
+    display: grid; grid-template-columns: 1fr 150px 90px; gap: 20px; align-items: baseline; }
+  .name { font-size: 21px; line-height: 1.2; }
+  .name a { text-decoration-color: var(--magenta); text-underline-offset: 4px; }
+  .note { font-size: 15px; color: var(--ink-soft); margin-top: 3px; max-width: 44em; }
+  .who2 { font-family: var(--chart); font-size: 13px; color: var(--ink-soft); }
+  .yr { font-family: var(--chart); font-size: 13px; color: var(--magenta); text-align: right; }
+  .pending .name, .pending .note, .pending .who2, .pending .yr { color: #9A9B8E; }
+  .pending .name { font-style: italic; }
+  @media (max-width: 820px) {
+    .entry { grid-template-columns: 1fr; gap: 4px; }
+    .yr { text-align: left; }
+  }
+</style>
+```
 
-Each file is the bare `<svg>...</svg>` with no wrapper and no frontmatter.
+- [ ] **Step 6: Write `Awaiting.astro`**
 
-- [ ] **Step 5: Verify the build**
+```astro
+---
+interface Props { what: string; }
+const { what } = Astro.props;
+---
+<div class="awaiting">
+  <b>This section is waiting on content.</b>
+  Nothing above is real. {what}
+</div>
+
+<style>
+  .awaiting { margin-top: 26px; border: 1px solid var(--magenta); padding: 14px 16px;
+    font-family: var(--chart); font-size: 13px; line-height: 1.6; color: var(--ink); max-width: 44em; }
+  .awaiting b { color: var(--magenta); display: block; margin-bottom: 5px; }
+</style>
+```
+
+- [ ] **Step 7: Verify the build**
 
 Run: `npm run build`
-Expected: build succeeds. Components are unused so far, which is fine.
+Expected: succeeds.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add src/components
-git commit -m "Add sheet, story, figure, and stats components"
+git commit -m "Add sheet, story, figure, stats, entry list, and placeholder components"
 ```
 
 ---
 
-### Task 7: The front page
+### Task 8: The Work route
 
 **Files:**
 - Modify: `src/pages/index.astro`
-- Create: `src/components/Masthead.astro`, `src/components/DeskIndex.astro`
+- Create: `src/components/figures/AbstractionLayer.astro`, `src/components/figures/ChangeHistory.astro`
 
 **Interfaces:**
-- Consumes: `Sheet.astro` from Task 6, `groupByEmployer` from Task 3, `start` from Task 5.
-- Produces: a rendered front sheet. Later tasks append sheets after it inside the same page.
+- Consumes: everything from Tasks 3, 6, and 7.
+- Produces: the Work route. Later routes copy its shape.
 
-- [ ] **Step 1: Write `Masthead.astro`**
+- [ ] **Step 1: Port the two diagrams**
 
-```astro
----
-interface Props { first: string; last: string; }
-const { first, last } = Astro.props;
----
-<h1 class="masthead">{first}<span>{last}</span></h1>
+`.superpowers/press-prototype.html` contains two finished SVG diagrams in chart ink. Copy each into its own component as a bare `<svg>...</svg>` with no wrapper and no frontmatter, dropping the `.dither` div, which the spec cuts.
 
-<style>
-  .masthead { font-size: clamp(44px, 10.5vw, 140px); line-height: .82; letter-spacing: -.03em; font-weight: 500; font-optical-sizing: auto; }
-  .masthead span { display: block; font-style: italic; font-weight: 300; letter-spacing: -.02em; }
-</style>
-```
+`src/components/figures/AbstractionLayer.astro` is the diagram whose labels read "Dock and aircraft", "Abstraction layer", and "Cloud and web".
 
-- [ ] **Step 2: Write `DeskIndex.astro`**
+`src/components/figures/ChangeHistory.astro` is the diagram whose labels read "One sentence", "Audit tables", "Default columns", "View table", "Section map", and "Script".
 
-Each entry is a real link to its sheet, which gives keyboard users section navigation for free.
+- [ ] **Step 2: Rewrite `index.astro`**
 
 ```astro
 ---
-interface Props { entries: { desk: string; href: string; description: string; where: string }[]; }
-const { entries } = Astro.props;
----
-<aside class="index">
-  <h2>Inside</h2>
-  <dl>
-    {entries.map(e => (
-      <div>
-        <dt><a href={e.href}>{e.desk}</a></dt>
-        <dd>{e.description}<span>{e.where}</span></dd>
-      </div>
-    ))}
-  </dl>
-</aside>
-
-<style>
-  .index { border-top: 1px solid var(--ink); padding-top: 9px; margin-top: 38px; }
-  .index h2 { font-family: var(--chart); font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .index dl { font-size: 15px; line-height: 1.42; }
-  .index div { border-top: 1px solid var(--rule); padding: 8px 0 9px; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
-  .index dt { font-family: var(--chart); font-size: 14px; font-weight: 600; }
-  .index dd { color: var(--ink-soft); }
-  .index dd span { display: block; font-family: var(--chart); font-size: 12px; color: var(--magenta); margin-top: 2px; }
-</style>
-```
-
-- [ ] **Step 3: Rewrite `index.astro` with the front sheet**
-
-The statement is about him, spans domains, and does not lead with drones. It is the only place the ink reveal runs, which is why it carries `id="lede"`.
-
-```astro
----
-import '../styles/tokens.css';
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
 import Sheet from '../components/Sheet.astro';
 import Masthead from '../components/Masthead.astro';
-import DeskIndex from '../components/DeskIndex.astro';
-
-const entries = [
-  { desk: 'Automation', href: '#coditas', description: 'Agents that do the work a person used to do by hand.', where: 'Coditas' },
-  { desk: 'Robotics', href: '#flytbase', description: 'Drone fleets, docking stations, and the services between them.', where: 'FlytBase' },
-  { desk: 'Markets', href: '#algobulls-yun', description: 'Trading strategies and the broker plumbing under them.', where: 'AlgoBulls' },
-  { desk: 'Vision', href: '#iam', description: 'Cameras that count people and notice what moved.', where: 'Integrated Active Monitoring' },
-  { desk: 'Workshop', href: '#workshop', description: 'Things built for their own sake, outside work hours.', where: 'Personal' },
-];
----
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Prithviraj Gotepatil</title>
-    <meta name="description" content="Backend systems, AI pipelines, and computer vision. Four years shipping production software across robotics, automation, markets, and vision." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..600&family=Archivo+Narrow:wght@400;500;600&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <Sheet id="front" desk="Front" name="Pune" period="India" paper="paper">
-      <Masthead first="Prithviraj" last="Gotepatil" />
-      <div class="dateline">
-        <div class="now">Backend systems, AI pipelines, computer vision</div>
-        <div>Four years, five domains</div>
-        <div>Available</div>
-      </div>
-      <div class="frontgrid">
-        <p class="lede" id="lede">
-          Backend is the part nobody sees until it breaks. I have built it for drones in the air,
-          cameras on a warehouse ceiling, trades moving through a broker, and agents doing compliance
-          work nobody wanted to do by hand. <span class="key">Different rooms, same job.</span>
-        </p>
-        <DeskIndex entries={entries} />
-      </div>
-    </Sheet>
-
-    <script>
-      import start from '../scripts/scroll';
-      start();
-    </script>
-
-    <style is:global>
-      .dateline { display: flex; flex-wrap: wrap; margin-top: 20px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-family: var(--chart); font-size: 13px; }
-      .dateline > div { padding: 7px 16px; border-right: 1px solid var(--rule); }
-      .dateline > div:first-child { padding-left: 0; }
-      .dateline > div:last-child { border-right: 0; }
-      .dateline .now { color: var(--magenta); font-weight: 600; }
-      .frontgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(250px, .9fr); gap: 44px; align-items: start; }
-      .lede { margin-top: 34px; font-size: clamp(21px, 2.5vw, 31px); line-height: 1.36; }
-      @media (max-width: 820px) { .frontgrid { grid-template-columns: 1fr; gap: 0; } }
-    </style>
-  </body>
-</html>
-```
-
-- [ ] **Step 4: Check it in a browser**
-
-```bash
-npm run dev
-```
-
-Open the printed URL. Expected: the masthead fills the screen, the dateline sits under it, the statement is grey and turns to ink as you scroll, and the index lists five desks with working anchor links.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add -A
-git commit -m "Add the front sheet, masthead, and desk index"
-```
-
----
-
-### Task 8: Render every employer sheet
-
-**Files:**
-- Modify: `src/pages/index.astro`
-
-**Interfaces:**
-- Consumes: `groupByEmployer` and `workshopProjects` from Task 3, all components from Task 6.
-- Produces: the complete chronology view.
-
-- [ ] **Step 1: Load and group the content**
-
-Add to the frontmatter of `index.astro`:
-
-```astro
-import { getCollection } from 'astro:content';
 import Story from '../components/Story.astro';
 import Figure from '../components/Figure.astro';
 import AbstractionLayer from '../components/figures/AbstractionLayer.astro';
 import ChangeHistory from '../components/figures/ChangeHistory.astro';
-import { groupByEmployer, workshopProjects } from '../lib/grouping';
+import { groupByEmployer } from '../lib/grouping';
+import { SECTIONS } from '../lib/sections';
 
-const allProjects = await getCollection('projects');
-const allEmployers = await getCollection('employers');
-const sheets = groupByEmployer(allProjects, allEmployers);
-const workshop = workshopProjects(allProjects);
-```
-
-- [ ] **Step 2: Render the sheets after the front sheet**
-
-Insert after the closing `</Sheet>` of the front sheet:
-
-```astro
-{sheets.map(sheet => (
-  <Sheet id={sheet.id} desk={sheet.desk} name={sheet.name} period={sheet.period} paper={sheet.paper}>
-    <p class="kicker">{sheet.role}</p>
-    <h2 class="hed">{sheet.desk}</h2>
-    <p class="deck">{sheet.blurb}</p>
-    {sheet.projects.map(p => (
-      <Story
-        title={p.data.title}
-        summary={p.data.summary}
-        highlights={p.data.highlights}
-        stack={p.data.stack}
-        metrics={p.data.metrics}
-      >
-        {p.id === 'abstraction-layer' && (
-          <Figure slot="figure" number={1} caption="Telemetry climbs, commands descend. The service is the only thing that speaks both.">
-            <AbstractionLayer />
-          </Figure>
-        )}
-        {p.id === 'mcp-change-history' && (
-          <Figure slot="figure" number={2} caption="The workflow fans out across four checks and comes back with a script.">
-            <ChangeHistory />
-          </Figure>
-        )}
-      </Story>
-    ))}
+const sheets = groupByEmployer(await getCollection('projects'), await getCollection('employers'));
+const elsewhere = SECTIONS.filter(s => s.href !== '/');
+---
+<Section
+  title="Prithviraj Gotepatil"
+  description="Backend systems, AI pipelines, and computer vision. Four years shipping production software across robotics, automation, markets, and vision."
+  current="/"
+>
+  <Sheet id="front" desk="Front" name="Pune" period="India" paper="paper">
+    <Masthead first="Prithviraj" last="Gotepatil" />
+    <div class="dateline">
+      <div class="now">Backend systems, AI pipelines, computer vision</div>
+      <div>Four years, five domains</div>
+      <div>Available</div>
+    </div>
+    <div class="frontgrid">
+      <p class="lede" id="lede">
+        Backend is the part nobody sees until it breaks. I have built it for drones in the air,
+        cameras on a warehouse ceiling, trades moving through a broker, and agents doing compliance
+        work nobody wanted to do by hand. <span class="key">Different rooms, same job.</span>
+      </p>
+      <aside class="index">
+        <h2>Inside</h2>
+        <dl>
+          {elsewhere.map(s => (
+            <div><dt><a href={s.href}>{s.tab}</a></dt><dd>{s.description}</dd></div>
+          ))}
+        </dl>
+      </aside>
+    </div>
   </Sheet>
-))}
 
-<Sheet id="workshop" desk="Workshop" name="Personal projects" period="2021 to now" paper="terrain">
-  <p class="kicker">Outside work hours</p>
-  <h2 class="hed">Things built for their own sake</h2>
-  {workshop.map(p => (
-    <Story
-      title={p.data.title}
-      summary={p.data.summary}
-      highlights={p.data.highlights}
-      stack={p.data.stack}
-      metrics={p.data.metrics}
-    />
+  {sheets.map(sheet => (
+    <Sheet id={sheet.id} desk={sheet.desk} name={sheet.name} period={sheet.period} paper={sheet.paper}>
+      <p class="kicker">{sheet.role}</p>
+      <h2 class="hed">{sheet.desk}</h2>
+      <p class="deck">{sheet.blurb}</p>
+      {sheet.projects.map(p => (
+        <Story
+          title={p.data.title}
+          summary={p.data.summary}
+          highlights={p.data.highlights}
+          stack={p.data.stack}
+          metrics={p.data.metrics}
+        >
+          {p.id === 'abstraction-layer' && (
+            <Figure slot="figure" number={1} caption="Telemetry climbs, commands descend. The service is the only thing that speaks both.">
+              <AbstractionLayer />
+            </Figure>
+          )}
+          {p.id === 'mcp-change-history' && (
+            <Figure slot="figure" number={2} caption="The workflow fans out across four checks and comes back with a script.">
+              <ChangeHistory />
+            </Figure>
+          )}
+        </Story>
+      ))}
+    </Sheet>
   ))}
-</Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <p class="deck">Pune, India. Open to remote.</p>
+    <ul class="contact">
+      <li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li>
+      <li><a href="https://github.com/PrithvirajG">github.com/PrithvirajG</a></li>
+    </ul>
+  </Sheet>
+</Section>
+
+<style is:global>
+  .dateline { display: flex; flex-wrap: wrap; margin-top: 20px; border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink); font-family: var(--chart); font-size: 13px; }
+  .dateline > div { padding: 7px 16px; border-right: 1px solid var(--rule); }
+  .dateline > div:first-child { padding-left: 0; }
+  .dateline > div:last-child { border-right: 0; }
+  .dateline .now { color: var(--magenta); font-weight: 600; }
+  .frontgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(250px, .9fr);
+    gap: 44px; align-items: start; }
+  .lede { margin-top: 34px; font-size: clamp(21px, 2.5vw, 31px); line-height: 1.36; }
+  .index { border-top: 1px solid var(--ink); padding-top: 9px; margin-top: 38px; }
+  .index h2 { font-family: var(--chart); font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .index dl { font-size: 15px; line-height: 1.42; }
+  .index div { border-top: 1px solid var(--rule); padding: 8px 0 9px;
+    display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+  .index dt { font-family: var(--chart); font-size: 14px; font-weight: 600; }
+  .index dt a { text-decoration-color: var(--magenta); text-underline-offset: 4px; }
+  .index dd { color: var(--ink-soft); }
+  .contact { list-style: none; font-size: 21px; }
+  .contact li { margin-bottom: 8px; }
+  .contact a { text-decoration-color: var(--magenta); text-underline-offset: 5px; }
+  @media (max-width: 820px) { .frontgrid { grid-template-columns: 1fr; gap: 0; } }
+</style>
 ```
 
-- [ ] **Step 3: Add the back page**
-
-Insert after the workshop sheet:
-
-```astro
-<Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
-  <h2 class="hed">Available for backend, AI, and robotics work</h2>
-  <p class="deck">Pune, India. Open to remote.</p>
-  <ul class="contact">
-    <li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li>
-    <li><a href="https://github.com/PrithvirajG">GitHub</a></li>
-  </ul>
-</Sheet>
-```
-
-Add to the global style block:
-
-```css
-.contact { list-style: none; font-size: 21px; }
-.contact li { margin-bottom: 8px; }
-.contact a { text-decoration-color: var(--magenta); text-underline-offset: 5px; }
-```
-
-- [ ] **Step 4: Verify sheet order and scrolling**
+- [ ] **Step 3: Check it in a browser**
 
 ```bash
 npm run dev
 ```
 
-Expected, in order: front, Automation for Coditas, Robotics for FlytBase, Markets for AlgoBulls and Yun, Vision for Integrated Active Monitoring, Workshop, Back page. Each sheet pins, scrolls its own content, fills its progress hairline, then hands over. No content is unreachable.
+Expected: the strip is fixed at the top with Work marked current; the masthead fills the screen; the statement turns from grey to ink as you scroll and the closing clause lands in magenta; sheets appear in the order Automation, Robotics, Markets, Vision, Back page; every sheet is fully reachable; the progress hairline fills.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add -A
+git commit -m "Add the Work route with the front sheet and employer sheets"
+```
+
+---
+
+### Task 9: Projects, Education, Courses, and Contests routes
+
+**Files:**
+- Create: `src/pages/projects.astro`, `src/pages/education.astro`, `src/pages/courses.astro`, `src/pages/contests.astro`
+
+**Interfaces:**
+- Consumes: `Section`, `Sheet`, `EntryList`, `Awaiting`, and the collections from Task 2.
+- Produces: four routes. Each renders real entries when its collection has any, and placeholder rows plus an `Awaiting` notice when it does not.
+
+All four share one shape. The Projects route differs only in reading the `projects` collection and filtering to personal ones.
+
+- [ ] **Step 1: Write `projects.astro`**
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+import { workshopProjects } from '../lib/grouping';
+
+const mine = workshopProjects(await getCollection('projects'));
+const entries = mine.map(p => ({
+  name: p.data.title,
+  note: p.data.summary,
+  who: p.data.stack.slice(0, 3).join(', '),
+  when: p.data.repo ? 'source' : '',
+  href: p.data.repo,
+}));
+const missing = mine.filter(p => !p.data.repo).length;
+---
+<Section title="Projects — Prithviraj Gotepatil" description="Things built outside work hours, with their repositories." current="/projects">
+  <Sheet id="projects" desk="Projects" name="Outside work hours" period="2021 to now" paper="terrain">
+    <p class="kicker">Built because I wanted them to exist</p>
+    <h1 class="hed">Personal projects</h1>
+    <p class="deck">Side builds, each with the stack it runs on and a link to the source where there is one.</p>
+    <EntryList entries={entries} />
+    {missing > 0 && <Awaiting what={`${missing} of these have no repository link yet. Send the GitHub URLs and they become links.`} />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>
+```
+
+- [ ] **Step 2: Write `education.astro`**
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+
+const rows = (await getCollection('education')).sort((a, b) => a.data.order - b.data.order);
+const real = rows.map(e => ({ name: e.data.qualification, note: e.data.note, who: e.data.institution, when: e.data.period }));
+const placeholder = [
+  { name: 'Qualification', note: 'One line on what it covered.', who: 'Institution', when: 'Years', pending: true },
+];
+---
+<Section title="Education — Prithviraj Gotepatil" description="Degree and the institution behind it." current="/education">
+  <Sheet id="education" desk="Education" name="Degree and institution" period="" paper="water">
+    <p class="kicker">Where the foundations came from</p>
+    <h1 class="hed">Education</h1>
+    <p class="deck">Formal qualifications, with the institution and the years.</p>
+    <EntryList entries={real.length ? real : placeholder} />
+    {real.length === 0 && <Awaiting what="Send the degree, the institution, the years, and the result, and this row becomes real." />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>
+```
+
+- [ ] **Step 3: Write `courses.astro`**
+
+Identical in shape to Step 2. Read the `courses` collection, sort by `order`, and map each entry to `{ name: data.name, note: data.note, who: data.issuer, when: data.year }`. Use three placeholder rows of `{ name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true }`. Sheet `id="courses"`, `desk="Courses"`, `name="Certifications and study"`, `paper="terrain"`. Kicker "What I went and learned on purpose", headline "Courses and certifications", deck "Structured study taken alongside the work, listed with who issued it and when." The `Awaiting` copy is "Send the courses worth listing with the issuer and the year and they replace these rows." Include the same back page sheet.
+
+- [ ] **Step 4: Write `contests.astro`**
+
+Identical in shape again. Read the `contests` collection, sort by `order`, and map each entry to `{ name: data.name, note: data.built, who: data.host, when: data.placement ?? data.year }`. Use two placeholder rows of `{ name: 'Hackathon or competition', note: 'What you built, in one line.', who: 'Host', when: 'Placement', pending: true }`. Sheet `id="contests"`, `desk="Contests"`, `name="Hackathons and competitions"`, `paper="water"`. Kicker "Built against a clock", headline "Hackathons and competitions", deck "Short-format builds, with who ran them and how they went." The `Awaiting` copy is "Send which contests to include, what you built, and how each placed." Include the same back page sheet.
+
+- [ ] **Step 5: Verify all four**
+
+```bash
+npm run dev
+```
+
+Visit each route. Expected: the strip marks the right tab on each; placeholder rows are grey and italic; the magenta notice appears under each empty section; every route scrolls correctly; the back page sheet closes each one.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add -A
+git commit -m "Add the Projects, Education, Courses, and Contests routes"
+```
+
+---
+
+### Task 10: The Notebook route and article pages
+
+**Files:**
+- Create: `src/pages/notebook.astro`, `src/pages/blog/[slug].astro`
+- Create: `src/content/posts/hello-world.md`
+
+**Interfaces:**
+- Consumes: `Article` from Task 6, `posts` from Task 2.
+- Produces: `/notebook` listing published posts newest first, and `/blog/<slug>` for each. Drafts appear in development and never in a production build.
+
+- [ ] **Step 1: Write one real post so the route has something to render**
+
+`src/content/posts/hello-world.md`. Mark it a draft, so it renders locally and never ships:
+
+```markdown
+---
+title: Starting a notebook
+date: 2026-09-10
+summary: What this section is for, and what will end up in it.
+draft: true
+---
+
+This is a placeholder post so the notebook has something to render during
+development. It is marked as a draft, so it does not appear in the built site.
+
+Delete this file when the first real post is written.
+```
+
+- [ ] **Step 2: Write `notebook.astro`**
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+
+const posts = (await getCollection('posts', p => import.meta.env.DEV || !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const entries = posts.map(p => ({
+  name: p.data.title,
+  note: p.data.summary,
+  who: p.data.draft ? 'draft' : '',
+  when: p.data.date.toISOString().slice(0, 10),
+  href: `/blog/${p.id}`,
+}));
+---
+<Section title="Notebook — Prithviraj Gotepatil" description="Occasional writing about systems that had to stay up." current="/notebook">
+  <Sheet id="notebook" desk="Notebook" name="Writing" period="" paper="paper">
+    <p class="kicker">Occasional, not scheduled</p>
+    <h1 class="hed">Notebook</h1>
+    <p class="deck">Notes on systems that had to stay up, and what it took.</p>
+    {entries.length > 0
+      ? <EntryList entries={entries} />
+      : <Awaiting what="No posts yet. Each one is a markdown file in the repository and appears here once written." />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>
+```
+
+- [ ] **Step 3: Write `blog/[slug].astro`**
+
+```astro
+---
+import { getCollection, render } from 'astro:content';
+import Article from '../../layouts/Article.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', p => import.meta.env.DEV || !p.data.draft);
+  return posts.map(post => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<Article title={post.data.title} date={post.data.date} summary={post.data.summary}>
+  <Content />
+</Article>
+```
+
+- [ ] **Step 4: Verify both**
+
+```bash
+npm run dev
+```
+
+Expected in development: `/notebook` lists the placeholder post marked draft, and its title links to an article page that reads as one column of normal-flow text with the strip above it and no pinning.
+
+```bash
+npm run build
+```
+
+Expected in the built output: no `blog/` page exists, because the only post is a draft. Confirm with `ls dist`.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add -A
-git commit -m "Render every employer sheet, most recent first"
+git commit -m "Add the Notebook route and article pages"
 ```
 
 ---
 
-### Task 9: Quality pass
+### Task 11: Quality pass
 
 **Files:**
-- Modify: whichever files the checks below turn up.
+- Modify: whichever files the checks turn up.
 
 **Interfaces:**
-- Consumes: the complete site from Task 8.
+- Consumes: the complete site.
 - Produces: no new interfaces.
 
-- [ ] **Step 1: Check the mobile fallback**
+- [ ] **Step 1: Check every route on mobile**
 
-In browser devtools, set the width to 390px. Expected: sheets are in normal flow, every section scrolls conventionally, the running head sits above the content, and no progress hairline is shown.
+At 390px wide, visit all six routes. Expected: the strip keeps its tabs and drops the name and the contact link; sheets are in normal flow; every section scrolls conventionally; no progress hairline; entry rows stack.
 
 - [ ] **Step 2: Check reduced motion**
 
-In devtools, emulate `prefers-reduced-motion: reduce` and reload. Expected: no pinning, no translation, the statement renders fully in ink with the closing clause in magenta.
+Emulate `prefers-reduced-motion: reduce` and reload the Work route. Expected: no pinning, no translation, the statement fully in ink with its closing clause in magenta.
 
 - [ ] **Step 3: Check keyboard navigation**
 
-Tab through the page. Expected: every index entry and every link shows a magenta focus ring, and following an index link jumps to the matching sheet.
+Tab through the strip and the Work index. Expected: a magenta focus ring on every link, the strip reachable first, and each tab navigating correctly.
 
-- [ ] **Step 4: Check contrast**
+- [ ] **Step 4: Check the strip does not cover content**
 
-Verify `--ink` on each of the three paper tones, and `--magenta` on each, meet at least 4.5:1. If magenta fails on any paper tone, darken the token and record the new value in the spec.
+On each route, follow an in-page anchor and confirm the target is not hidden behind the fixed strip. If it is, add `scroll-margin-top: var(--strip)` to `.sheet` in `src/styles/tokens.css`.
 
-- [ ] **Step 5: Check a long sheet**
+- [ ] **Step 5: Check contrast**
 
-The FlytBase sheet has seven projects and will be the tallest. Confirm the whole sheet is reachable and that scrolling through it does not feel unreasonably long. If it does, split it into two sheets as the spec allows.
+Verify `--ink` and `--magenta` against all three paper tones at 4.5:1 or better, and the pending grey `#9A9B8E` against `--paper-terrain`. If pending grey fails, darken it until it passes and record the value in the spec. Placeholder text must still be readable.
 
-- [ ] **Step 6: Run the full check**
+- [ ] **Step 6: Check the longest sheet**
+
+The FlytBase sheet carries seven projects and will be tallest. Confirm it is fully reachable and does not take an unreasonable time to scroll. If it does, split it into two sheets, which the spec allows.
+
+- [ ] **Step 7: Run the full check**
 
 ```bash
 npm test && npm run build
 ```
 
-Expected: ten tests pass and the build succeeds.
+Expected: twelve tests pass, build succeeds.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add -A
-git commit -m "Quality pass: mobile, reduced motion, focus, contrast"
+git commit -m "Quality pass across all six routes"
 ```
 
 ---
 
-### Task 10: Cut over
+### Task 12: Cut over
 
 Do not start this task without explicit approval from the repository owner. It changes what visitors see.
 
 **Files:**
 - Delete: `index.html`
-- Modify: `README.md` (create if absent)
-
-**Interfaces:**
-- Consumes: the verified site from Task 9.
-- Produces: the live site.
+- Create: `README.md`
 
 - [ ] **Step 1: Ask the owner to switch the Pages source**
 
-In the repository settings, under Pages, set the source to GitHub Actions. This is a manual step in the GitHub interface and cannot be scripted from here. Until it is done, the workflow builds but nothing changes for visitors.
+In repository settings, under Pages, set the source to GitHub Actions. This is manual and cannot be scripted. Until it is done the workflow builds but nothing changes for visitors.
 
 - [ ] **Step 2: Remove the old single-file site**
 
@@ -1242,32 +1464,32 @@ In the repository settings, under Pages, set the source to GitHub Actions. This 
 git rm index.html
 ```
 
-The file remains in history at commit `75994d7` and can be restored with `git show 75994d7:index.html`.
+It stays in history at commit `75994d7` and can be recovered with `git show 75994d7:index.html`.
 
-- [ ] **Step 3: Write a short README**
+- [ ] **Step 3: Write the README**
 
-Cover: what the site is, `npm run dev` to work on it, `npm test` and `npm run build` to check it, that content lives in `src/content/projects` as one file per project, and that deployment happens on push to `main`.
+Cover: what the site is; `npm run dev` to work on it; `npm test` and `npm run build` to check it; that content lives in `src/content/` as one markdown file per entry, one directory per kind; that a blog post is a file in `src/content/posts/` with `draft: true` until ready; and that deployment happens on push to `main`.
 
-- [ ] **Step 4: Push and verify the deploy**
+- [ ] **Step 4: Merge, push, and verify**
 
-```bash
-git add -A
-git commit -m "Cut over to the Astro site"
-git push
-```
+Merge `press-redesign` into `main`, push, and watch the Actions run. When green, open the live site and confirm all six tabs, the pinning, and every link.
 
-Watch the Actions run. When it is green, open `https://prithvirajg.github.io` and confirm the front sheet renders, the sheets pin and hand over, and every link works.
+- [ ] **Step 5: Confirm the no-JavaScript fallback**
 
-- [ ] **Step 5: Confirm the fallback still holds**
-
-With JavaScript disabled in the browser, reload the live site. Expected: every word of every project is readable in normal document flow. If anything is hidden, fix it before considering the cutover complete.
+With JavaScript disabled, reload every route. Expected: every word readable in normal flow. If anything is hidden, fix it before calling the cutover done.
 
 ---
 
 ## Remaining content work
 
-Not blocking, and best done by the repository owner rather than an implementer.
+Owned by the repository owner, not by an implementer. Until each arrives, the
+relevant section ships with its placeholder visible.
 
-- Answer the fifteen metric questions carried in `openQuestions` frontmatter. They are the highest-value improvement to the site.
-- Supply screenshots, architecture diagrams, and drone footage. Until then every figure stays a drawn SVG diagram. When they arrive, decide per figure whether a real image beats a drawing.
-- Decide whether the discipline lens toggle is worth building, which the spec defers.
+- The fifteen metric questions carried in `openQuestions`.
+- Degree, institution, years, and result.
+- Courses and certifications, with issuer and year.
+- Hackathons and competitions, with host, placement, and what was built.
+- Repository URLs for the five personal projects.
+- The first real blog post.
+- Screenshots, architecture diagrams, and drone footage. Until they arrive every
+  figure stays a drawn SVG diagram.

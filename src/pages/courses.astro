@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+
+const rows = (await getCollection('courses')).sort((a, b) => a.data.order - b.data.order);
+const real = rows.map(c => ({ name: c.data.name, note: c.data.note, who: c.data.issuer, when: c.data.year }));
+const placeholder = [
+  { name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true },
+  { name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true },
+  { name: 'Course name', note: 'One line on what it covered and why it was worth the time.', who: 'Issuer', when: 'Year', pending: true },
+];
+---
+<Section title="Courses — Prithviraj Gotepatil" description="Structured study taken alongside the work." current="/courses">
+  <Sheet id="courses" desk="Courses" name="Certifications and study" period="" paper="terrain">
+    <p class="kicker">What I went and learned on purpose</p>
+    <h1 class="hed">Courses and certifications</h1>
+    <p class="deck">Structured study taken alongside the work, listed with who issued it and when.</p>
+    <EntryList entries={real.length ? real : placeholder} />
+    {real.length === 0 && <Awaiting what="Send the courses worth listing with the issuer and the year and they replace these rows." />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>

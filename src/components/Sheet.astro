@@ -1,0 +1,10 @@
+---
+interface Props { id: string; desk: string; name: string; period: string; paper: 'paper' | 'terrain' | 'water'; }
+const { id, desk, name, period, paper } = Astro.props;
+---
+<section class="sheet" id={id} data-paper={paper} style={`background: var(--paper${paper === 'paper' ? '' : '-' + paper})`}>
+  <div class="margin"><div class="runhead"><b>{desk}</b><span>{name}</span><span>{period}</span></div></div>
+  <div class="col"><slot /></div>
+  <div class="pin"><i></i></div>
+</section>
+<div class="spacer"></div>
