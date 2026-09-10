@@ -1,13 +1,105 @@
 ---
-import '../styles/tokens.css';
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import Masthead from '../components/Masthead.astro';
+import Story from '../components/Story.astro';
+import Figure from '../components/Figure.astro';
+import AbstractionLayer from '../components/figures/AbstractionLayer.astro';
+import ChangeHistory from '../components/figures/ChangeHistory.astro';
+import { groupByEmployer } from '../lib/grouping';
+import { SECTIONS } from '../lib/sections';
+
+const sheets = groupByEmployer(await getCollection('projects'), await getCollection('employers'));
+const elsewhere = SECTIONS.filter(s => s.href !== '/');
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Prithviraj Gotepatil</title>
-  </head>
-  <body>
-    <p>Build works.</p>
-  </body>
-</html>
+<Section
+  title="Prithviraj Gotepatil"
+  description="Backend systems, AI pipelines, and computer vision. Four years shipping production software across robotics, automation, markets, and vision."
+  current="/"
+>
+  <Sheet id="front" desk="Front" name="Pune" period="India" paper="paper">
+    <Masthead first="Prithviraj" last="Gotepatil" />
+    <div class="dateline">
+      <div class="now">Backend systems, AI pipelines, computer vision</div>
+      <div>Four years, five domains</div>
+      <div>Available</div>
+    </div>
+    <div class="frontgrid">
+      <p class="lede" id="lede">
+        Backend is the part nobody sees until it breaks. I have built it for drones in the air,
+        cameras on a warehouse ceiling, trades moving through a broker, and agents doing compliance
+        work nobody wanted to do by hand. <span class="key">Different rooms, same job.</span>
+      </p>
+      <aside class="index">
+        <h2>Inside</h2>
+        <dl>
+          {elsewhere.map(s => (
+            <div><dt><a href={s.href}>{s.tab}</a></dt><dd>{s.description}</dd></div>
+          ))}
+        </dl>
+      </aside>
+    </div>
+  </Sheet>
+
+  {sheets.map(sheet => (
+    <Sheet id={sheet.id} desk={sheet.desk} name={sheet.name} period={sheet.period} paper={sheet.paper}>
+      <p class="kicker">{sheet.role}</p>
+      <h2 class="hed">{sheet.desk}</h2>
+      <p class="deck">{sheet.blurb}</p>
+      {sheet.projects.map(p => (
+        <Story
+          title={p.data.title}
+          summary={p.data.summary}
+          highlights={p.data.highlights}
+          stack={p.data.stack}
+          metrics={p.data.metrics}
+        >
+          {p.id === 'abstraction-layer' && (
+            <Figure slot="figure" number={1} caption="Telemetry climbs, commands descend. The service is the only thing that speaks both.">
+              <AbstractionLayer />
+            </Figure>
+          )}
+          {p.id === 'mcp-change-history' && (
+            <Figure slot="figure" number={2} caption="The workflow fans out across four checks and comes back with a script.">
+              <ChangeHistory />
+            </Figure>
+          )}
+        </Story>
+      ))}
+    </Sheet>
+  ))}
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <p class="deck">Pune, India. Open to remote.</p>
+    <ul class="contact">
+      <li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li>
+      <li><a href="https://github.com/PrithvirajG">github.com/PrithvirajG</a></li>
+    </ul>
+  </Sheet>
+</Section>
+
+<style is:global>
+  .dateline { display: flex; flex-wrap: wrap; margin-top: 20px; border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink); font-family: var(--chart); font-size: 13px; }
+  .dateline > div { padding: 7px 16px; border-right: 1px solid var(--rule); }
+  .dateline > div:first-child { padding-left: 0; }
+  .dateline > div:last-child { border-right: 0; }
+  .dateline .now { color: var(--magenta); font-weight: 600; }
+  .frontgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(250px, .9fr);
+    gap: 44px; align-items: start; }
+  .lede { margin-top: 34px; font-size: clamp(21px, 2.5vw, 31px); line-height: 1.36; }
+  .index { border-top: 1px solid var(--ink); padding-top: 9px; margin-top: 38px; }
+  .index h2 { font-family: var(--chart); font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .index dl { font-size: 15px; line-height: 1.42; }
+  .index div { border-top: 1px solid var(--rule); padding: 8px 0 9px;
+    display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+  .index dt { font-family: var(--chart); font-size: 14px; font-weight: 600; }
+  .index dt a { text-decoration-color: var(--magenta); text-underline-offset: 4px; }
+  .index dd { color: var(--ink-soft); }
+  .contact { list-style: none; font-size: 21px; }
+  .contact li { margin-bottom: 8px; }
+  .contact a { text-decoration-color: var(--magenta); text-underline-offset: 5px; }
+  @media (max-width: 820px) { .frontgrid { grid-template-columns: 1fr; gap: 0; } }
+</style>
