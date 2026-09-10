@@ -1,0 +1,32 @@
+:root {
+  --paper: #E8E7DE;
+  --paper-terrain: #E0E1D4;
+  --paper-water: #DCE2E3;
+  --ink: #14150F;
+  --ink-soft: #54554A;
+  --magenta: #B01B6E;
+  --blue: #1B5A87;
+  --rule: #A9AA9C;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --chart: "Archivo Narrow", "Helvetica Neue", Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.62;
+  font-variant-numeric: oldstyle-nums;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .9s ease;
+}
+
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; }
+
+.kicker { font-family: var(--chart); font-size: 13px; font-weight: 600; color: var(--magenta); }
+.hed { font-size: clamp(30px, 4.6vw, 58px); line-height: .98; letter-spacing: -.02em; font-weight: 500; margin: 8px 0 4px; }
+.deck { font-size: 20px; font-style: italic; color: var(--ink-soft); max-width: 26em; margin-bottom: 20px; }
