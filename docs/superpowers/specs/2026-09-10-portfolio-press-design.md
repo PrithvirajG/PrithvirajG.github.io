@@ -69,9 +69,56 @@ arrows appended to links, and accenting a single word inside a headline.
 
 ## Structure
 
-### Ordering
+The site is a set of sections. A newspaper calls these sections; the reader sees
+them as tabs in the masthead strip. Each section is a separate route with a real
+URL, and each behaves internally exactly like the approved reading experience:
+pinned sheets that scroll their own content and hand over to the next.
 
-Chronological, most recent first.
+### Why routes and not client-side tabs
+
+Client-side tabs were rejected. Real routes give shareable links, a working back
+button, and a page each search engine can index. They also avoid forcing the pinned
+sheet engine to tear down and recompute its geometry on every tab switch, which is
+its most fragile moment.
+
+### Sections
+
+| Route | Tab | Contains |
+|---|---|---|
+| `/` | Work | Masthead, statement, section index, then one sheet per employer |
+| `/projects` | Projects | Personal projects, each with its repository link |
+| `/education` | Education | Degree, institution, years, result, and anything academic |
+| `/courses` | Courses | Courses and certifications, with issuer and year |
+| `/contests` | Contests | Hackathons and competitions, with placement and what was built |
+| `/notebook` | Notebook | Blog index; each post links to its own article page |
+| `/blog/<slug>` | — | One article. Not a tab, and not pinned. |
+
+Contact is not a tab. It is the last sheet of every section and a link at the right
+end of the masthead strip.
+
+### The masthead strip
+
+Persistent across every route. Carries the name set small on the left, the section
+tabs in the middle, and contact on the right. The current section is marked by a
+rule beneath it, not by colour alone. On the Work route the full masthead appears
+below the strip at full size; elsewhere the strip alone stands in for it.
+
+The strip is a list of real links. It works with JavaScript disabled and it is
+reachable by keyboard.
+
+### The Work landing
+
+Carries the whole argument in one screen:
+
+- Masthead: the name, set large, as the primary graphic element.
+- A dateline strip: what he does, the span of it, and availability.
+- A statement about him, not about any single employer. It names four different
+  domains and closes on the through-line. This is the one place the ink reveal runs.
+- An index listing every section with a plain description. It duplicates the tab
+  strip deliberately, because a reader arriving at the top of the page reads before
+  they navigate.
+
+Employer sheets follow, chronological, most recent first.
 
 | Sheet | Desk | Employer | Period |
 |---|---|---|---|
@@ -80,22 +127,16 @@ Chronological, most recent first.
 | 2 | Robotics | FlytBase | 2023 to 2025 |
 | 3 | Markets | AlgoBulls and Yun Solutions | 2022 to 2023 |
 | 4 | Vision | Integrated Active Monitoring | 2021 to 2022 |
-| 5 | Workshop | Personal projects | — |
-| 6 | Back page | Contact | — |
+| 5 | Back page | Contact | — |
 
-### The front page
+The Work landing must not lead with drones. Drone work is one entry among many.
 
-Carries the whole argument in one screen:
+### Article pages
 
-- Masthead: the name, set large, as the primary graphic element.
-- A dateline strip: what he does, the span of it, and availability.
-- A statement about him, not about any single employer. It names four different
-  domains and closes on the through-line. This is the one place the ink reveal runs.
-- An index box listing five desks with a plain description and the employer beneath.
-  On the real site each entry links to its sheet. This doubles as navigation and as
-  proof of breadth.
-
-The front page must not lead with drones. Drone work is one entry among five.
+A blog post is long-form reading, and long-form reading and pinned sheets fight
+each other. An article page therefore drops pinning entirely: the masthead strip,
+a headline, a dateline, and one column of text in normal flow, at a measure under
+eighty characters. It keeps the palette and the type, nothing else.
 
 ### A sheet
 
@@ -152,10 +193,24 @@ poor connection, and keeps the text crawlable.
 
 ### Content model
 
-One Astro content collection per kind. Roughly twenty project files, one per
-project, each with frontmatter carrying title, employer, period, whether it reached
-production, discipline tags, stack, summary, highlight bullets, optional metrics,
-and links. Smaller collections describe employers and disciplines.
+One Astro content collection per kind, and one markdown file per entry. Adding
+anything later is one new file, never a code change.
+
+| Collection | Entries | Feeds |
+|---|---|---|
+| `employers` | 4 | Work sheets |
+| `projects` | ~20 | Work sheets and the Projects route |
+| `education` | 1 to 3 | Education route |
+| `courses` | as supplied | Courses route |
+| `contests` | as supplied | Contests route |
+| `posts` | grows over time | Notebook route and article pages |
+
+Projects carry an optional `repo` and `demo` URL. On the Projects route the
+repository link is prominent, since that is what a reader goes there for.
+
+Posts carry a title, a date, a one-line summary, an optional list of tags, and a
+`draft` flag. Drafts render in development and are excluded from the production
+build, so a half-written post can live in the repository safely.
 
 A lens is a grouping function over the one project set. Chronology groups by
 employer. Discipline groups by tag. Adding a project later is one new file.
@@ -172,16 +227,31 @@ chronology view is complete and the real content is in.
 ```
 src/
   content/
-    projects/     one markdown file per project
     employers/    coditas, flytbase, algobulls-yun, iam
-    disciplines/  automation, robotics, markets, vision, infrastructure
-  components/     Sheet, Figure, Stats, Index, RunningHead
-  scripts/        pin.ts, the scroll engine
+    projects/     one markdown file per project
+    education/    one file per qualification
+    courses/      one file per course or certification
+    contests/     one file per hackathon or competition
+    posts/        one file per blog post
+  components/     Sheet, Story, Figure, Stats, Masthead, SectionNav, EntryList
+  layouts/        Section.astro (pinned), Article.astro (normal flow)
+  lib/            grouping.ts
+  scripts/        pin.ts, scroll.ts
   styles/         tokens.css
   pages/
-    index.astro
+    index.astro         Work
+    projects.astro
+    education.astro
+    courses.astro
+    contests.astro
+    notebook.astro
+    blog/[slug].astro   one article page per post
 .github/workflows/deploy.yml
 ```
+
+Two layouts, and only two. `Section.astro` carries the masthead strip and hosts
+pinned sheets; every tab uses it. `Article.astro` carries the masthead strip and one
+column of normal-flow text; only blog posts use it.
 
 The existing `index.html` is preserved in git history and kept building until the
 replacement is approved.
@@ -199,9 +269,26 @@ heatmap.
 ## Content gaps
 
 The current site carries fifteen unanswered questions about metrics, listed in its
-own "Open TODOs" section. Those questions move into the `metrics` frontmatter of
-the relevant project files and stay visible in development builds until answered.
+own "Open TODOs" section. Those questions move into the `openQuestions` frontmatter
+of the relevant project files and stay visible in development builds until answered.
 They are the highest-value content work remaining.
+
+The new sections need content that does not exist anywhere yet. Until the owner
+supplies it, each route ships with its structure in place and a single placeholder
+entry that is obviously a placeholder, never invented detail.
+
+- **Education:** degree, institution, years, and result. The current site states a
+  B.Tech with a CGPA of 8.79 and nothing more.
+- **Courses:** which courses and certifications to list, with issuer and year.
+- **Contests:** which hackathons and competitions, what was built, and how each
+  placed.
+- **Projects:** repository URLs, and demo URLs where they exist. The current site
+  names five personal projects and links to none of them.
+- **Posts:** whether any blog post exists yet. If none does, the Notebook route
+  ships with an empty state saying so plainly.
+
+Nothing in these sections may be invented. An empty section is honest; a fabricated
+certificate is not.
 
 ## Quality floor
 
@@ -213,7 +300,11 @@ They are the highest-value content work remaining.
 
 ## Out of scope
 
-- A content management system or admin interface.
-- A blog.
+- A content management system or admin interface. Posts are markdown files in the
+  repository, written in an editor and published by pushing.
+- Comments on blog posts.
+- Tag or archive pages for the blog. The Notebook route lists every post; that is
+  enough until there are enough posts for it not to be.
+- Search.
 - Analytics.
 - The discipline lens toggle, deferred as above.
