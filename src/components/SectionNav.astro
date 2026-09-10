@@ -10,5 +10,161 @@ const { current } = Astro.props;
       <a href={s.href} aria-current={s.href === current ? 'page' : undefined}>{s.tab}</a>
     ))}
   </nav>
-  <div class="say"><a href="#contact">Get in touch</a></div>
+  <div class="say">
+    <a
+      href="mailto:prithvirajgotepatil@gmail.com"
+      id="contact-trigger"
+      aria-haspopup="dialog"
+      aria-expanded="false"
+      aria-controls="contact-popover"
+    >Get in touch</a>
+  </div>
 </div>
+
+<div class="contact-backdrop" id="contact-backdrop" hidden></div>
+<div class="contact-popover" id="contact-popover" role="dialog" aria-label="Get in touch" aria-modal="true" hidden>
+  <button type="button" class="contact-close" id="contact-close" aria-label="Close">&times;</button>
+  <p class="contact-kicker">Reach me directly</p>
+  <a class="contact-line" href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a>
+  <a class="contact-line" href="https://github.com/PrithvirajG">github.com/PrithvirajG</a>
+</div>
+
+<style>
+  .contact-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 21, 15, 0.35);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    z-index: 90;
+  }
+  .contact-backdrop.on { opacity: 1; }
+
+  .contact-popover {
+    position: fixed;
+    top: calc(var(--strip) + 12px);
+    right: 16px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    box-shadow: 0 16px 36px rgba(20, 21, 15, 0.3);
+    padding: 20px 24px 22px;
+    min-width: 270px;
+    z-index: 91;
+    transform-origin: top right;
+    transform: translateY(-14px) scale(0.94);
+    opacity: 0;
+    transition:
+      opacity 0.55s cubic-bezier(0.16, 0.8, 0.3, 1),
+      transform 0.55s cubic-bezier(0.16, 0.8, 0.3, 1);
+  }
+  .contact-popover.on {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .contact-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: 0;
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .contact-close:hover { color: var(--ink); }
+
+  .contact-kicker {
+    font-family: var(--chart);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+  }
+
+  .contact-line {
+    display: block;
+    font-size: 17px;
+    margin-top: 9px;
+    text-decoration-color: var(--magenta);
+    text-underline-offset: 4px;
+  }
+  .contact-line:first-of-type { margin-top: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-backdrop,
+    .contact-popover {
+      transition: none;
+    }
+    .contact-popover { transform: none; }
+  }
+</style>
+
+<script>
+  var trigger = document.getElementById('contact-trigger');
+  var popover = document.getElementById('contact-popover');
+  var backdrop = document.getElementById('contact-backdrop');
+  var closeBtn = document.getElementById('contact-close');
+
+  if (trigger && popover && backdrop && closeBtn) {
+    var focusables = popover.querySelectorAll('a, button');
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+    var hideTimer;
+    var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var openPopover = function (e) {
+      e.preventDefault();
+      clearTimeout(hideTimer);
+      backdrop.hidden = false;
+      popover.hidden = false;
+      // Force a layout flush so the browser commits the pre-transition state
+      // (opacity 0, translated and scaled down) before we flip the class that
+      // animates to the final state. This is more reliable than
+      // requestAnimationFrame, which browsers pause in a backgrounded tab.
+      void popover.offsetHeight;
+      backdrop.classList.add('on');
+      popover.classList.add('on');
+      trigger.setAttribute('aria-expanded', 'true');
+      closeBtn.focus();
+      document.addEventListener('keydown', onKeydown);
+    };
+
+    var closePopover = function () {
+      backdrop.classList.remove('on');
+      popover.classList.remove('on');
+      trigger.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('keydown', onKeydown);
+      hideTimer = setTimeout(
+        function () {
+          backdrop.hidden = true;
+          popover.hidden = true;
+        },
+        reduceMotion ? 0 : 550
+      );
+      trigger.focus();
+    };
+
+    var onKeydown = function (e) {
+      if (e.key === 'Escape') {
+        closePopover();
+        return;
+      }
+      if (e.key === 'Tab') {
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    trigger.addEventListener('click', openPopover);
+    closeBtn.addEventListener('click', closePopover);
+    backdrop.addEventListener('click', closePopover);
+  }
+</script>
