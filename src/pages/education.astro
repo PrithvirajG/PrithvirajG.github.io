@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../layouts/Section.astro';
+import Sheet from '../components/Sheet.astro';
+import EntryList from '../components/EntryList.astro';
+import Awaiting from '../components/Awaiting.astro';
+
+const rows = (await getCollection('education')).sort((a, b) => a.data.order - b.data.order);
+const real = rows.map(e => ({ name: e.data.qualification, note: e.data.note, who: e.data.institution, when: e.data.period }));
+const placeholder = [
+  { name: 'Qualification', note: 'One line on what it covered.', who: 'Institution', when: 'Years', pending: true },
+];
+---
+<Section title="Education — Prithviraj Gotepatil" description="Degree and the institution behind it." current="/education">
+  <Sheet id="education" desk="Education" name="Degree and institution" period="" paper="water">
+    <p class="kicker">Where the foundations came from</p>
+    <h1 class="hed">Education</h1>
+    <p class="deck">Formal qualifications, with the institution and the years.</p>
+    <EntryList entries={real.length ? real : placeholder} />
+    {real.length === 0 && <Awaiting what="Send the degree, the institution, the years, and the result, and this row becomes real." />}
+  </Sheet>
+
+  <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
+    <h2 class="hed">Available for backend, AI, and robotics work</h2>
+    <ul class="contact"><li><a href="mailto:prithvirajgotepatil@gmail.com">prithvirajgotepatil@gmail.com</a></li></ul>
+  </Sheet>
+</Section>
