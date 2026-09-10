@@ -10,10 +10,10 @@ highlights:
   - Addresses context-aware dialogue with vector-indexed chat history retrieval.
   - Optimized embedding latency and distributed session state.
   - Designed for future audio input via Whisper and MCP adoption.
+repo: https://github.com/PrithvirajG/my-chatbot
 openQuestions:
-  - GitHub link for this project.
   - Benchmark metrics such as retrieval latency and concurrent session capacity.
-order: 1
+order: 5
 ---
 
 A scalable multimodal chatbot backend built with FastAPI, Redis (session

@@ -12,7 +12,7 @@ openQuestions:
   - Communication protocol used (MQTT/HTTP/BLE).
   - Mobile app platform (Android/iOS).
   - Whether this was a college or independent project.
-order: 3
+order: 9
 ---
 
 An IoT-enabled inhaler usage tracking system built on NodeMCU. Monitors

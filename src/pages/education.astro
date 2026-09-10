@@ -17,7 +17,7 @@ const placeholder = [
     <h1 class="hed">Education</h1>
     <p class="deck">Formal qualifications, with the institution and the years.</p>
     <EntryList entries={real.length ? real : placeholder} />
-    {real.length === 0 && <Awaiting what="Send the degree, the institution, the years, and the result, and this row becomes real." />}
+    {real.length === 0 && <Awaiting what="Nothing above is real. Send the degree, the institution, the years, and the result, and this row becomes real." />}
   </Sheet>
 
   <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">

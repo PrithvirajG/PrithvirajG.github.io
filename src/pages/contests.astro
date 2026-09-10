@@ -18,7 +18,7 @@ const placeholder = [
     <h1 class="hed">Hackathons and competitions</h1>
     <p class="deck">Short-format builds, with who ran them and how they went.</p>
     <EntryList entries={real.length ? real : placeholder} />
-    {real.length === 0 && <Awaiting what="Send which contests to include, what you built, and how each placed." />}
+    {real.length === 0 && <Awaiting what="Nothing above is real. Send which contests to include, what you built, and how each placed." />}
   </Sheet>
 
   <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">

@@ -27,7 +27,7 @@ const placeholder = [
     <h1 class="hed">Courses and certifications</h1>
     <p class="deck">Structured study taken alongside the work, listed with who issued it and when.</p>
     <EntryList entries={real.length ? real : placeholder} />
-    {real.length === 0 && <Awaiting what="Send the courses worth listing with the issuer and the year and they replace these rows." />}
+    {real.length === 0 && <Awaiting what="Nothing above is real. Send the courses worth listing with the issuer and the year and they replace these rows." />}
   </Sheet>
 
   <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">

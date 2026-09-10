@@ -1,10 +1,10 @@
 ---
-interface Props { what: string; }
-const { what } = Astro.props;
+interface Props { what: string; heading?: string; }
+const { what, heading = 'This section is waiting on content.' } = Astro.props;
 ---
 <div class="awaiting">
-  <b>This section is waiting on content.</b>
-  Nothing above is real. {what}
+  <b>{heading}</b>
+  {what}
 </div>
 
 <style>

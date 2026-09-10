@@ -34,6 +34,8 @@ const projects = defineCollection({
     openQuestions: z.array(z.string()).optional(),
     repo: z.string().url().optional(),
     demo: z.string().url().optional(),
+    stage: z.enum(['done', 'in-progress']).optional(),
+    private: z.boolean().optional(),
     order: z.number(),
   }),
 });

@@ -11,10 +11,10 @@ const entries = mine.map(p => ({
   name: p.data.title,
   note: p.data.summary,
   who: p.data.stack.slice(0, 3).join(', '),
-  when: p.data.repo ? 'source' : '',
-  href: p.data.repo,
+  when: p.data.stage === 'in-progress' ? 'In progress' : '',
+  href: p.data.private ? undefined : p.data.repo,
 }));
-const missing = mine.filter(p => !p.data.repo).length;
+const missing = mine.filter(p => !p.data.repo && !p.data.private).length;
 ---
 <Section title="Projects — Prithviraj Gotepatil" description="Things built outside work hours, with their repositories." current="/projects">
   <Sheet id="projects" desk="Projects" name="Outside work hours" period="2021 to now" paper="terrain">
@@ -22,7 +22,12 @@ const missing = mine.filter(p => !p.data.repo).length;
     <h1 class="hed">Personal projects</h1>
     <p class="deck">Side builds, each with the stack it runs on and a link to the source where there is one.</p>
     <EntryList entries={entries} />
-    {missing > 0 && <Awaiting what={`${missing} of these have no repository link yet. Send the GitHub URLs and they become links.`} />}
+    {missing > 0 && (
+      <Awaiting
+        heading={`${missing} of these ${missing === 1 ? "has" : "have"} no repository link yet.`}
+        what="Send the GitHub URL and it becomes a link."
+      />
+    )}
   </Sheet>
 
   <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">
