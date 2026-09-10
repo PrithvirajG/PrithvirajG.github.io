@@ -53,7 +53,7 @@ build. When the post is ready, remove the `draft` flag (or set it to
 
 ## How the site is structured
 
-There are six routes, one per tab in the site's masthead strip (Front,
+There are six routes, one per tab in the site's masthead strip (Work,
 Projects, Education, Courses, Contests, Notebook). All six share a layout
 that renders that masthead. Within a route, content is organized into
 "sheets" that pin and scroll independently — each sheet manages its own

@@ -54,6 +54,7 @@ const elsewhere = SECTIONS.filter(s => s.href !== '/');
           highlights={p.data.highlights}
           stack={p.data.stack}
           metrics={p.data.metrics}
+          openQuestions={p.data.openQuestions}
         >
           {p.id === 'abstraction-layer' && (
             <Figure slot="figure" number={1} caption="Telemetry climbs, commands descend. The service is the only thing that speaks both.">

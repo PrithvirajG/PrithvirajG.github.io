@@ -8,8 +8,9 @@ interface Props {
   metrics?: { value: string; label: string; accent?: boolean }[];
   repo?: string;
   demo?: string;
+  openQuestions?: string[];
 }
-const { title, summary, highlights, stack, metrics = [], repo, demo } = Astro.props;
+const { title, summary, highlights, stack, metrics = [], repo, demo, openQuestions = [] } = Astro.props;
 const hasFigure = Astro.slots.has('figure');
 ---
 <article class="story">
@@ -24,6 +25,12 @@ const hasFigure = Astro.slots.has('figure');
         {repo && <><dt>Source</dt><dd><a href={repo}>{repo.replace(/^https?:\/\//, '')}</a></dd></>}
         {demo && <><dt>Live</dt><dd><a href={demo}>{demo.replace(/^https?:\/\//, '')}</a></dd></>}
       </dl>
+      {import.meta.env.DEV && openQuestions.length > 0 && (
+        <div class="open-questions">
+          <p class="oq-label">Still to answer</p>
+          <ul>{openQuestions.map(q => <li>{q}</li>)}</ul>
+        </div>
+      )}
     </div>
     {hasFigure && <div><slot name="figure" /></div>}
   </div>
@@ -40,5 +47,10 @@ const hasFigure = Astro.slots.has('figure');
   .tail { font-family: var(--chart); font-size: 13px; color: var(--ink-soft); }
   .tail dt { color: var(--ink); font-weight: 600; margin-top: 8px; }
   .tail a { text-decoration-color: var(--magenta); text-underline-offset: 4px; }
+  .open-questions { margin-top: 10px; padding-left: 10px; border-left: 2px solid var(--magenta);
+    font-family: var(--chart); font-size: 13px; color: var(--ink-soft); }
+  .oq-label { color: var(--magenta); font-weight: 600; margin-bottom: 4px; }
+  .open-questions ul { margin: 0 0 0 1.1em; }
+  .open-questions li { margin-bottom: 3px; }
   @media (max-width: 820px) { .cols.two { grid-template-columns: 1fr; gap: 22px; } }
 </style>
