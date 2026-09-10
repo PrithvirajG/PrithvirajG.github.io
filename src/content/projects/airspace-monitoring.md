@@ -11,7 +11,7 @@ highlights:
 openQuestions:
   - What specific airspace events are detected (e.g. conflicting traffic, geofence breaches).
   - Any latency targets this service operates under.
-order: 3
+order: 2
 ---
 
 A cloud microservice that monitors drone airspace in real-time using sensor

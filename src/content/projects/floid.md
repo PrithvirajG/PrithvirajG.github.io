@@ -1,6 +1,6 @@
 ---
 title: A safety net for indoor test flights
-employer: flytbase
+employer: flytbase-edge
 status: internal
 disciplines: [robotics, iot]
 stack: [Python, Raspberry Pi, MQTT, Real-time Monitoring, IoT]
@@ -12,7 +12,7 @@ highlights:
 openQuestions:
   - Specific safety parameters monitored (altitude ceiling, minimum battery %, proximity to walls, etc.).
   - Whether this is still in active use.
-order: 7
+order: 3
 ---
 
 F.L.O.I.D. (First Line of Incident Defence) is a Raspberry Pi-based safety

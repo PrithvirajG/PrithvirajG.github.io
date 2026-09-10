@@ -14,7 +14,7 @@ highlights:
 openQuestions:
   - Number of enterprise on-prem customers deployed.
   - Industries they operate in (e.g. defense, energy, logistics).
-order: 5
+order: 4
 ---
 
 Delivered the complete on-premise version of the FlytBase platform for

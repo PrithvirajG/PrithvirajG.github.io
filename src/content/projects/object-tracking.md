@@ -1,6 +1,6 @@
 ---
 title: From a tap on screen to the drone following a target
-employer: flytbase
+employer: flytbase-edge
 status: internal
 disciplines: [robotics, cv]
 stack: [Python, OpenCV, YOLOv5, CSRT / KCF, DJI SDK, Proportional Control, Edge Computing]
@@ -13,7 +13,7 @@ highlights:
 openQuestions:
   - Approximate end-to-end tracking latency (e.g. Xms frame-to-command).
   - Any frame rates or hardware targets this was optimized for.
-order: 6
+order: 2
 ---
 
 An internal drone-based object tracking system where a user selects a target

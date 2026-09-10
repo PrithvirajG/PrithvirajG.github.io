@@ -1,6 +1,6 @@
 ---
 title: A production Android app running on the drone's remote controller
-employer: flytbase
+employer: flytbase-edge
 status: production
 disciplines: [robotics, android]
 stack: [Kotlin, Android Studio, DJI Mobile SDK, MQTT, AWS S3, WorkManager, Coroutines, MVVM / Hilt, Millicast]
@@ -18,7 +18,7 @@ metrics:
 openQuestions:
   - Approximate number of enterprise customers or drone operators using this app.
   - Number of DJI drone and dock models it supports.
-order: 2
+order: 1
 ---
 
 A production Kotlin Android application deployed on DJI Smart Remote Controllers

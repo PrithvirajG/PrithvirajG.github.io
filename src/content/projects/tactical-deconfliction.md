@@ -12,7 +12,7 @@ highlights:
 openQuestions:
   - Maximum number of drones monitored simultaneously.
   - The specific failsafe action types that are supported.
-order: 4
+order: 3
 ---
 
 A GoLang-based system for monitoring multiple intra-organization drones in
