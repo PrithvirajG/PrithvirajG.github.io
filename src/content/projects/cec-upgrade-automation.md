@@ -11,6 +11,7 @@ highlights:
   - Implemented background task processing via a RabbitMQ consumer with async Redis pub-sub event streaming to the frontend over WebSockets.
   - Integrated live metadata API calls to the latest instance during processing to ensure freshness of object attributes.
   - Built a diff pane UI allowing users to view and reconcile changes across three versions simultaneously.
+  - Reused the existing JS-to-BR conversion APIs so instances still running an older JavaScript version could be upgraded too.
 metrics:
   - { value: "10,000+", label: "Objects handled per CEC file" }
 openQuestions:

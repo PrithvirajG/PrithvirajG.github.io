@@ -7,7 +7,7 @@ stack: [Python, MCP Protocol, Windsurf Workflows, Async Python, SQL, Multi-tenan
 summary: A custom MCP server integrated into Windsurf Workflows automates registering audit and change history for database form columns, replacing a manual process that took a customer success team member hours.
 highlights:
   - Built an async MCP server with tools that execute multi-step database queries, validating column presence across Audit Tables, Default Columns Table, View Table, and Section assignments.
-  - Designed dynamic multi-instance database connectivity, connecting to different instance databases at runtime based on request context, and identified and fixed a critical single-connection architectural flaw in a peer's implementation before it caused production issues.
+  - Designed dynamic multi-instance database connectivity for the MCP tools, connecting to different instance databases at runtime based on request context.
   - Wrote a Windsurf Workflow that orchestrates the MCP tools in sequence from a single plain-language user input.
   - Reduced the CSS team's time per form registration from 3-4 hours to ~7 minutes, an approximately 97% reduction in time spent.
 metrics:

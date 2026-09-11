@@ -12,7 +12,7 @@ highlights:
   - Refactored the video streaming architecture for live drone feed relay to Millicast Cloud, supporting efficient 4G variable-bandwidth streaming via SharedFlow state management.
   - Followed MVVM architecture with Hilt dependency injection, and integrated Crashlytics and Firebase Analytics for production monitoring.
   - Designed and maintained CI/CD workflows for automated APK builds, code signing, and staged deployment to internal testers.
-  - Fixed a critical NFZ/Geofence sync bug, previously failing about 70% of the time, by redesigning DJI hardware event handling and state propagation; post-fix success rate reached about 95%.
+  - Fixed a critical NFZ/Geofence sync bug, previously failing about 70% of the time, by redesigning DJI hardware event handling and state propagation; post-fix success rate reached about 95%, with the remaining failures traced to DJI's own hardware rather than the FlytBase code.
 metrics:
   - { value: "70 to 95%", label: "Geofence sync success rate after redesign", accent: true }
 openQuestions:
@@ -29,4 +29,5 @@ backend.
 
 A critical NFZ/Geofence sync bug, previously failing about 70% of the time, was
 fixed by redesigning DJI hardware event handling and state propagation; the
-post-fix success rate reached about 95%.
+post-fix success rate reached about 95%, and the remaining failures traced back
+to DJI's own hardware, not the FlytBase code.

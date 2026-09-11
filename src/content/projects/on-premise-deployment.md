@@ -11,6 +11,7 @@ highlights:
   - Managed the on-premise deployment toolchain of Kubernetes, Zarf (air-gapped Kubernetes packaging), K9s, and GitHub CI/CD pipelines.
   - Worked directly with customer network architecture to design deployment topology for both air-gapped and hybrid environments.
   - Built, modified, and released the full FlytBase application bundle including the edge computing device.
+  - Owned feature delivery end to end on this and other projects, mentoring junior developers through the harder parts of the rollout, and adopted generative AI tools early to speed up development.
 openQuestions:
   - Number of enterprise on-prem customers deployed.
   - Industries they operate in (e.g. defense, energy, logistics).

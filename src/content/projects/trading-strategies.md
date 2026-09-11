@@ -8,7 +8,7 @@ summary: Developed automated stock trading strategies using technical analysis i
 highlights:
   - Designed and implemented multiple algorithmic trading strategies in Python, covering entry/exit logic, position sizing, and risk management rules.
   - Integrated broker APIs into the AlgoBulls platform to enable live automated trade execution for platform users.
-  - Maintained the pyalgotrading and pyalgostrategypool open-source repositories on GitHub, following PEP-8 standards and managing contributions.
+  - Maintained the pyalgotrading and pyalgostrategypool open-source repositories on GitHub, along with other private repositories, following PEP-8 standards and managing contributions.
   - Built data analysis pipelines using pandas and related libraries to evaluate strategy P&L reports and identify optimization opportunities.
   - Profiled and optimized strategies with high time or memory complexity, improving their viability for live trading.
 openQuestions:
