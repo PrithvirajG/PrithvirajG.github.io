@@ -6,8 +6,7 @@ disciplines: [infrastructure, robotics]
 stack: [ROS2, Kubernetes, Zarf, K9s, Media-MTX, GitHub CI/CD, Edge Computing, Python]
 summary: Delivered the complete on-premise version of the FlytBase platform for enterprise customers operating in air-gapped or hybrid network environments where no internet access is permitted.
 highlights:
-  - Developed ROS2 nodes for video streaming on the FlytAIR Edge Device with support for Media-MTX, Agora, and Ant-Media stream service providers.
-  - Added Media-MTX platform support in the streaming management service for secure edge-local drone video delivery.
+  - Developed ROS2 nodes for video streaming on the FlytAIR Edge Device, adding Media-MTX support for fully local drone video delivery with no dependency on an internet-reachable streaming service.
   - Managed the on-premise deployment toolchain of Kubernetes, Zarf (air-gapped Kubernetes packaging), K9s, and GitHub CI/CD pipelines.
   - Worked directly with customer network architecture to design deployment topology for both air-gapped and hybrid environments.
   - Built, modified, and released the full FlytBase application bundle including the edge computing device.

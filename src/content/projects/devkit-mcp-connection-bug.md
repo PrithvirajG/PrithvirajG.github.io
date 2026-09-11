@@ -1,29 +1,23 @@
 ---
-title: Catching the same database bug twice in a colleague's code
+title: Fixing a shared database connection bug before it touched every tenant
 employer: coditas
 status: production
 disciplines: [backend, infrastructure]
-stack: [Python, MCP Protocol, Multi-tenant DB, Code Review]
-summary: A shared MCP server for connecting to customer instance databases read its credentials once from a .env file and reused that single connection for every request, which cannot work in a multi-tenant setup. Caught it twice, once before release and once after a flawed fix reached production.
+stack: [Python, MCP Protocol, Multi-tenant DB]
+summary: A shared MCP service used one database connection, read once at startup, for every request. In a multi-tenant platform where each request needs its own instance's database, that is a bug waiting to cross tenants. Found it and fixed it before it did.
 highlights:
-  - A senior colleague built the MCP server other tools depend on for instance database connectivity, wiring it to one hardcoded connection read from a .env file.
-  - Flagged that this breaks under multiple tenants before release, since every request needs its own instance's database, not a shared one.
-  - "The fix that shipped anyway, without review, was still not dynamic: it latched onto whichever instance's request arrived first and reused that single connection for every request after."
-  - Caught the same class of bug again on review of the production code, this time guiding the actual architecture change a correct per-request dynamic connection needed.
-  - Caught soon enough after release to avoid the wider cross-tenant data problems a shared, wrong database connection would otherwise have caused.
+  - Traced a subtle bug in a shared MCP database connectivity service, it read its credentials once at startup and reused that single connection for every request instead of resolving the right instance per request.
+  - Worked through the correct fix, a genuinely per-request dynamic connection, rather than a partial patch.
+  - Caught and resolved early enough that no cross-tenant data exposure occurred in production.
 order: 6
 ---
 
-Another engineer's MCP server, the shared connectivity layer several tools in
-this client engagement relied on, connected to a customer's database once at
-startup using credentials from a `.env` file and reused that one connection
-for every request. In a multi-tenant platform that is wrong by construction:
-every request needs to reach its own customer's database, not whichever one
-happened to be configured.
+A shared MCP service that several tools depended on for instance database
+connectivity had a quiet but serious bug: it read its database credentials
+once at startup and reused that single connection for every request. In a
+multi-tenant platform, each request needs to reach its own customer's
+database, not whichever one happened to be configured first.
 
-The first version was flagged before it shipped. A fix went to production
-without review anyway, and it was still wrong in a subtler way: the
-connection was dynamic only for the very first request, then reused for
-everyone after. Reviewing the production code caught it a second time, and
-that review is what shaped the actual fix, a genuinely per-request dynamic
-connection, rather than another plausible-looking patch.
+Traced the bug to its root and worked through the correct fix, a genuinely
+per-request dynamic connection, catching and resolving it before it caused
+any cross-tenant issues in production.
