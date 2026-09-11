@@ -48,6 +48,8 @@ const education = defineCollection({
     period: z.string(),
     result: z.string().optional(),
     note: z.string().optional(),
+    certificate: z.string().optional(),
+    url: z.string().url().optional(),
     order: z.number(),
   }),
 });
