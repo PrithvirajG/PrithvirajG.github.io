@@ -10,7 +10,7 @@ highlights:
 repo: https://github.com/PrithvirajG/DocumentScannerApp
 openQuestions:
   - Whether this is available on the Play Store.
-order: 3
+order: 5
 ---
 
 An Android application that uses OpenCV's Java SDK to capture a document

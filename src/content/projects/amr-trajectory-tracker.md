@@ -10,7 +10,7 @@ highlights:
   - A service lets a caller save the trajectory to JSON, CSV, or YAML, optionally trimmed to the most recent N seconds.
   - A reader node loads a saved trajectory file, optionally transforms it into the odom frame with tf2, and republishes it for visualization.
 repo: https://github.com/PrithvirajG/amr_trajectory_tracker
-order: 4
+order: 6
 ---
 
 A ROS 2 package built around two nodes. One tracks and buffers a robot's

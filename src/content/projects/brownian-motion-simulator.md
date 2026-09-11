@@ -10,7 +10,7 @@ highlights:
   - Every run records the full path and each collision event.
   - Exports a trajectory plot, a collision statistics file, and a GIF of the run for later review.
 repo: https://github.com/PrithvirajG/brownian-motion-simulator
-order: 6
+order: 8
 ---
 
 A robot moves inside a square arena, travelling in a straight line until it

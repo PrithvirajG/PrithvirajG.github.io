@@ -12,7 +12,7 @@ highlights:
   - Everything runs on the machine it's installed on; images and model outputs never leave it.
   - A React single-page app talks to the API over HTTP and WebSockets for live job status.
 repo: https://github.com/PrithvirajG/PixQuery
-order: 1
+order: 2
 ---
 
 A local-first AI image search and processing system. It watches folders of

@@ -2,23 +2,44 @@
 import { getCollection } from 'astro:content';
 import Section from '../layouts/Section.astro';
 import Sheet from '../components/Sheet.astro';
-import EntryList from '../components/EntryList.astro';
+import Story from '../components/Story.astro';
+import Figure from '../components/Figure.astro';
 import Awaiting from '../components/Awaiting.astro';
 
 const rows = (await getCollection('contests')).sort((a, b) => a.data.order - b.data.order);
-const real = rows.map(c => ({ name: c.data.name, note: c.data.built, who: c.data.host, when: c.data.placement ?? c.data.year }));
-const placeholder = [
-  { name: 'Hackathon or competition', note: 'What you built, in one line.', who: 'Host', when: 'Placement', pending: true },
-  { name: 'Hackathon or competition', note: 'What you built, in one line.', who: 'Host', when: 'Placement', pending: true },
-];
 ---
 <Section title="Contests — Prithviraj Gotepatil" description="Hackathons and competitions, and what came out of them." current="/contests">
   <Sheet id="contests" desk="Contests" name="Hackathons and competitions" period="" paper="water">
     <p class="kicker">Built against a clock</p>
     <h1 class="hed">Hackathons and competitions</h1>
     <p class="deck">Short-format builds, with who ran them and how they went.</p>
-    <EntryList entries={real.length ? real : placeholder} />
-    {real.length === 0 && <Awaiting what="Nothing above is real. Send which contests to include, what you built, and how each placed." />}
+
+    {rows.length === 0 && (
+      <Awaiting
+        heading="Nothing above is real."
+        what="Send which contests to include, what you built, and how each placed."
+      />
+    )}
+
+    {rows.map((c, i) => (
+      <>
+        <p class="kicker">{c.data.host}</p>
+        <Story
+          title={c.data.name}
+          summary={c.data.summary}
+          highlights={c.data.highlights}
+          stack={c.data.stack}
+          metrics={c.data.metrics}
+          repo={c.data.repo}
+        >
+          {c.data.image && (
+            <Figure slot="figure" number={i + 1} caption={c.data.imageCaption ?? c.data.name}>
+              <img src={c.data.image} alt={c.data.imageCaption ?? c.data.name} />
+            </Figure>
+          )}
+        </Story>
+      </>
+    ))}
   </Sheet>
 
   <Sheet id="contact" desk="Back page" name="Get in touch" period="Pune, India" paper="paper">

@@ -13,7 +13,7 @@ highlights:
 repo: https://github.com/PrithvirajG/my-chatbot
 openQuestions:
   - Benchmark metrics such as retrieval latency and concurrent session capacity.
-order: 5
+order: 7
 ---
 
 A scalable multimodal chatbot backend built with FastAPI, Redis (session

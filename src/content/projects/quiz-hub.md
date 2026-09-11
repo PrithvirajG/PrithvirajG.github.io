@@ -12,7 +12,7 @@ highlights:
 repo: https://github.com/PrithvirajG/MCQ_questionbank_system
 openQuestions:
   - Whether a live demo exists.
-order: 8
+order: 10
 ---
 
 A FastAPI-powered MCQ quiz platform for students. Supports timed quiz

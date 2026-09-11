@@ -75,7 +75,17 @@ const contests = defineCollection({
     host: z.string(),
     year: z.string(),
     placement: z.string().optional(),
-    built: z.string().optional(),
+    summary: z.string(),
+    highlights: z.array(z.string()).min(1),
+    stack: z.array(z.string()).min(1),
+    metrics: z.array(z.object({
+      value: z.string(),
+      label: z.string(),
+      accent: z.boolean().optional(),
+    })).optional(),
+    image: z.string().optional(),
+    imageCaption: z.string().optional(),
+    repo: z.string().url().optional(),
     order: z.number(),
   }),
 });

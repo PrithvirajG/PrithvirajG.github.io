@@ -13,7 +13,7 @@ highlights:
   - Built as a pnpm and Turborepo monorepo, with a NestJS API and a Next.js 15 frontend.
   - Repository is private for now.
 repo: https://github.com/PrithvirajG/contextree.ai
-order: 2
+order: 4
 ---
 
 Context Tree organizes AI conversations as hierarchical nodes rather than one
